@@ -1,0 +1,29 @@
+project:
+  type: website
+
+website:
+  title: "Rashmin Chitale"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: about.qmd
+        text: About
+      - href: posts.qmd
+        text: Posts
+    right: 
+      - icon: github
+        href: https://github.com/Rcshmin
+      - icon: envelope
+        href: https://github.com/Rcshmin
+      - icon: linkedin
+        href: https://github.com/Rcshmin
+
+format:
+  html:
+    theme: litera    
+    css: styles.css
+    toc: true
+
+editor: visual
+
