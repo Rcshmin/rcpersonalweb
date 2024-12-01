@@ -1,6 +1,8 @@
 [
   {
     "listing": "/posts.html",
-    "items": []
+    "items": [
+      "/posts/2024-11-26-k-nearest-neighbors/index.html"
+    ]
   }
 ]

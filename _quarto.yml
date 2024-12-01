@@ -4,26 +4,24 @@ project:
 website:
   title: "Rashmin Chitale"
   navbar:
+    background: "#d3d3d3"
+    logo: /images/logo.png
     left:
       - href: index.qmd
-        text: Home
-      - href: about.qmd
-        text: About
+        text: "About ![](/images/aboutlogo.png){height=1em}"
       - href: posts.qmd
-        text: Posts
+        text: "Posts ![](/images/postslogo.png){height=1em}"
     right: 
       - icon: github
         href: https://github.com/Rcshmin
-      - icon: envelope
-        href: https://github.com/Rcshmin
       - icon: linkedin
-        href: https://github.com/Rcshmin
+        href: https://au.linkedin.com/in/rashmin-chitale-0aa989173
 
 format:
   html:
-    theme: litera    
-    css: styles.css
-    toc: true
+    theme: [litera, styles.css]
+    highlight-style: a11y-dark
+    mainfont: "Atkinson Hyperlegible"
 
 editor: visual
 
