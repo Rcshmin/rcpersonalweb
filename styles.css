@@ -6,3 +6,7 @@ $font-family: "Atkinson Hyperlegible", sans-serif;
 $font-family-serif: "Atkinson Hyperlegible", sans-serif;
 
 /*-- scss:rules --*/
+
+.quarto-grid-item p.card-img-middle > img {
+  object-position: middle
+}
