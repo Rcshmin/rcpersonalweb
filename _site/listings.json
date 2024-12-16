@@ -2,7 +2,9 @@
   {
     "listing": "/posts.html",
     "items": [
-      "/posts/2024-11-26-k-nearest-neighbors/index.html"
+      "/posts/2024-12-11-k-fold-cv/index.html",
+      "/posts/2024-11-26-k-nearest-neighbors/index.html",
+      "/posts/2024-12-04-decision-tree-classifier-v1/index.html"
     ]
   }
 ]

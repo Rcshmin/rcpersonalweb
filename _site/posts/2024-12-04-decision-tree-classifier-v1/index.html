@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Rashmin Chitale">
+<meta name="dcterms.date" content="2022-05-07">
+<meta name="description" content="A from scratch implementation of the decision tree classifier algorithm in R">
+
+<title>Decision tree classifier from scratch v1 – Rashmin Chitale</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../images/logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Rashmin Chitale</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">About <img src="../..\images/aboutlogo.png" style="height:1em"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Posts <img src="../..\images/postslogo.png" style="height:1em"></span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Rcshmin"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://au.linkedin.com/in/rashmin-chitale-0aa989173"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Decision tree classifier from scratch v1</h1>
+                  <div>
+        <div class="description">
+          A from scratch implementation of the decision tree classifier algorithm in R
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">datascience</div>
+                <div class="quarto-category">R</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Rashmin Chitale </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 7, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-are-decision-trees" id="toc-what-are-decision-trees" class="nav-link active" data-scroll-target="#what-are-decision-trees">What are decision trees?</a>
+  <ul class="collapse">
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">Example</a></li>
+  </ul></li>
+  <li><a href="#describing-a-tree" id="toc-describing-a-tree" class="nav-link" data-scroll-target="#describing-a-tree">Describing a tree</a></li>
+  <li><a href="#measures-of-uncertainty" id="toc-measures-of-uncertainty" class="nav-link" data-scroll-target="#measures-of-uncertainty">Measures of uncertainty</a>
+  <ul class="collapse">
+  <li><a href="#entropy" id="toc-entropy" class="nav-link" data-scroll-target="#entropy">Entropy</a></li>
+  <li><a href="#gini-impurity" id="toc-gini-impurity" class="nav-link" data-scroll-target="#gini-impurity">Gini impurity</a></li>
+  <li><a href="#information-gain" id="toc-information-gain" class="nav-link" data-scroll-target="#information-gain">Information gain</a></li>
+  </ul></li>
+  <li><a href="#stopping-conditions" id="toc-stopping-conditions" class="nav-link" data-scroll-target="#stopping-conditions">Stopping conditions</a></li>
+  <li><a href="#helper-functions" id="toc-helper-functions" class="nav-link" data-scroll-target="#helper-functions">Helper functions</a>
+  <ul class="collapse">
+  <li><a href="#train-test-split" id="toc-train-test-split" class="nav-link" data-scroll-target="#train-test-split">Train-test split</a></li>
+  <li><a href="#checking-the-purity" id="toc-checking-the-purity" class="nav-link" data-scroll-target="#checking-the-purity">Checking the purity</a></li>
+  <li><a href="#classification" id="toc-classification" class="nav-link" data-scroll-target="#classification">Classification</a></li>
+  <li><a href="#splitting-the-data" id="toc-splitting-the-data" class="nav-link" data-scroll-target="#splitting-the-data">Splitting the data</a></li>
+  <li><a href="#potential-and-best-splits" id="toc-potential-and-best-splits" class="nav-link" data-scroll-target="#potential-and-best-splits">Potential and best splits</a></li>
+  </ul></li>
+  <li><a href="#the-main-algorithm" id="toc-the-main-algorithm" class="nav-link" data-scroll-target="#the-main-algorithm">The main algorithm</a>
+  <ul class="collapse">
+  <li><a href="#recursive-function" id="toc-recursive-function" class="nav-link" data-scroll-target="#recursive-function">Recursive function</a></li>
+  <li><a href="#organising-function" id="toc-organising-function" class="nav-link" data-scroll-target="#organising-function">Organising function</a></li>
+  </ul></li>
+  <li><a href="#remarks" id="toc-remarks" class="nav-link" data-scroll-target="#remarks">Remarks</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="what-are-decision-trees" class="level1">
+<h1>What are decision trees?</h1>
+<p>Decision trees are a non-parametric supervised learning method. Supervised means that the input and output data is labelled. Non-parametric means that no assumptions are made regarding the assumptions of the population. This definition is obviously not that useful, but with some further consideration we can make some sense of it. Analogous to a tree in real life, a decision tree is a tree-like model of decisions. In essence, we pass this model data on several input variables, and ask it to create a tree that predicts the value of the target variable. This is all probably best understood through an example, so let’s take a look at one…</p>
+<section id="example" class="level2">
+<h2 class="anchored" data-anchor-id="example">Example</h2>
+<p>In this example we consider how we can classify a fish as a salmon or tuna based off its length and weight. Looking at the below data set, it is easy to see some patterns, in how each type of fish is grouped based off its two characteristics. For instance, any fish with a length less than around 2.5 is a tuna. Continuing on, a fish with length greater than 2.5, and weight less than around 4 is a salmon. We could also say that a fish with length greater than 7.2 and weight greater than 4.1 is a tuna. You are probably getting the gist of it at this point…</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>If we take all of these splits, or otherwise decisions and organised them, it would look something like this</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>n= 1000 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+  1) root 1000 392 tuna (0.3920000 0.6080000)  
+    2) length&gt;=2.996015 693 301 salmon (0.5656566 0.4343434)  
+      4) weight&lt; 4.006707 306   0 salmon (1.0000000 0.0000000) *
+      5) weight&gt;=4.006707 387  86 tuna (0.2222222 0.7777778)  
+       10) length&lt; 6.978225 220  86 tuna (0.3909091 0.6090909)  
+         20) length&lt; 3.398175 19   2 salmon (0.8947368 0.1052632) *
+         21) length&gt;=3.398175 201  69 tuna (0.3432836 0.6567164)  
+           42) length&lt; 4.998481 86  41 tuna (0.4767442 0.5232558)  
+             84) weight&gt;=6.948427 41   0 salmon (1.0000000 0.0000000) *
+             85) weight&lt; 6.948427 45   0 tuna (0.0000000 1.0000000) *
+           43) length&gt;=4.998481 115  28 tuna (0.2434783 0.7565217)  
+             86) length&gt;=6.017146 58  28 tuna (0.4827586 0.5172414)  
+              172) weight&lt; 6.832503 28   0 salmon (1.0000000 0.0000000) *
+              173) weight&gt;=6.832503 30   0 tuna (0.0000000 1.0000000) *
+             87) length&lt; 6.017146 57   0 tuna (0.0000000 1.0000000) *
+       11) length&gt;=6.978225 167   0 tuna (0.0000000 1.0000000) *
+    3) length&lt; 2.996015 307   0 tuna (0.0000000 1.0000000) *</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>And voila, we have our tree! From referring to the diagram above, we can see that the decision tree has created splits across our input variables (weight and length) such that our scatterplot becomes partitioned into rectangular regions containing each type of the fish (the target variable). This is exactly what the decision tree classifier does. Some of you may be asking why this is useful? Well suppose we have a noob fisherman in the Atlantic ocean (which only contains salmon and tuna for our purposes) who has just caught his first fish, but is unsure of what fish it is. Taking the decision tree just produced, this noob fisherman could then identify what fish he has caught. Well this is not exactly the most realistic scenario, but you get the idea hopefully. So now that we know what the algorithm does, lets take a look at some terms that are often thrown around when talking about decisions tree’s.</p>
+</section>
+</section>
+<section id="describing-a-tree" class="level1">
+<h1>Describing a tree</h1>
+<p>It would good if we could have some terminology to describe the different parts of a tree…</p>
+<ul>
+<li><strong>Root Node</strong>: The input data set or population used to create the decision tree is the root node. It is always the tp most node in a decision tree from which the data set it split into different subsets</li>
+<li><strong>Decision node</strong>: Sub-nodes that are split into further sub-nodes. The decision nodes, as the name suggests, are the nodes which split our data set into subsets. From our example before, the <span class="math inline">\(\text{length} \geq 3\)</span>` or <span class="math inline">\(\text{length }&lt;7\)</span> are two of the many decision nodes</li>
+<li><strong>Parent and child node</strong>: A node which is divided sub-nodes is the parent node of the sub-nodes, whereas the sub-nodes are the children of the given parent node. The <span class="math inline">\(\text{weight} &lt; 6.8\)</span> is the parent node of the terminal nodes below it.</li>
+<li><strong>Leaf/terminal node</strong>: Nodes that do not get split any further</li>
+<li><strong>Pure node</strong>: A node at which points classified all belong to a single class. For our tree, all the terminal nodes are also pure nodes</li>
+<li><strong>Branch/sub-tree</strong>: A subsection of the entire tree is called branch or sub-tree</li>
+</ul>
+</section>
+<section id="measures-of-uncertainty" class="level1">
+<h1>Measures of uncertainty</h1>
+<p>We saw earlier that the purpose of a decision tree is to partition the data into regions of a certain class (or try its best to do so). There were many choices for the split among our two input variables, but one may naturally ask which of these splits are the best, and in which order should we carry them out, such that the resultant data is partitioned as good as possible. Now as it turns out, this question relates the notion of uncertainty. The best split will be the one that minimizes the uncertainty of the child nodes. More specifically, we seek to achieve the maximum level of homogeneity (sameness) in the target variable, such that the total uncertainty of the child nodes are less than the parent node.</p>
+<section id="entropy" class="level2">
+<h2 class="anchored" data-anchor-id="entropy">Entropy</h2>
+<p>Entropy quantifies the amount of uncertainty involved in the outcome of a process. It has formula</p>
+<p><span class="math display">\[\begin{align*}
+\mbox{Entropy} &amp;= \sum_{c}{f_{c} \cdot I(c)}
+\end{align*}\]</span></p>
+<p>where <span class="math inline">\(f_{c}\)</span> is the fraction of a class in data set and <span class="math inline">\(I(c)\)</span> is the information content in the class. Also <span class="math inline">\(c\)</span> is the total number of classes. In the context of decision tree classifiers, <span class="math inline">\(I(c) = -\log_{2}{(f_{c})}\)</span> which gives</p>
+<p><span class="math display">\[\begin{align*}
+\mbox{Entropy} &amp;= -\sum_{c}{f_{c} \cdot \log_{2}{(f_{c})}} &amp; \\
+\end{align*}\]</span></p>
+<p>The choice of the <span class="math inline">\(\text{log}\)</span> function is beyond the scope of this article, but those interested may wish to take a look at <a href="https://towardsdatascience.com/entropy-is-a-measure-of-uncertainty-e2c000301c2c">this article</a>. Implementing an entropy function can be done as shown below</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>get_entropy <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Assume x is factor of labels</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(x) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="dv">0</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  weights <span class="ot">=</span> <span class="fu">table</span>(x)<span class="sc">/</span><span class="fu">length</span>(x)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  info_content <span class="ot">=</span> <span class="sc">-</span>weights<span class="sc">*</span><span class="fu">log2</span>(weights)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  entropy <span class="ot">=</span> <span class="fu">sum</span>(info_content)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(entropy)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can perform a few checks using our function to check that it performs as expected</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Entropy is zero?</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_entropy</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Entropy is one?</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">get_entropy</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Entropy is non-zero?</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">get_entropy</span>(salmon_fish<span class="sc">$</span>type)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0.9660781</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If we only have one class then our data is homogeneous, which means there is no uncertainty regarding the data. If we have an equal number of observations across two classes, then uncertainty is at its maximum. Note that a lower value of entropy always means less uncertainty. A simple situation which may help one understand how entropy works is the flipping of a coin</p>
+<div class="cell" data-warnings="false">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>For the coin flip (two classes), entropy is constrained between zero and one. A fair coin has the most uncertainty, whereas a coin with some bias towards one side has less uncertainty. This intuitively makes sense.</p>
+</section>
+<section id="gini-impurity" class="level2">
+<h2 class="anchored" data-anchor-id="gini-impurity">Gini impurity</h2>
+<p>Gini impurity is one of the other available measures for calculating uncertainty. While entropy does not have an intuitive interpretation of its formula, we can say that gini impurity calculates the amount of probability of a specific feature that is classified incorrectly when selected randomly precisely. It has formula</p>
+<p><span class="math display">\[\begin{align*}
+\mbox{Gini index} &amp;= 1 - \sum_{i=1}^{n}{(p_{i})^2}
+\end{align*}\]</span></p>
+<p>where <span class="math inline">\(p_{i}\)</span> is the probability of an element being classified for a distinct class. This can also be easily implemented</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>get_gini_impurity <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Assume x is a factor with labels</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(x) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="dv">0</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  weights <span class="ot">=</span> <span class="fu">table</span>(x)<span class="sc">/</span><span class="fu">length</span>(x)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  weights_squared <span class="ot">=</span> weights<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  sum_of_squares <span class="ot">=</span> <span class="fu">sum</span>(weights_squared)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  gini <span class="ot">=</span> <span class="dv">1</span> <span class="sc">-</span> sum_of_squares</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(gini)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As with entropy, we can also perform some checks</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Minimum uncertainty is 0</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_gini_impurity</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Maximum uncertainty is 0.5 for two classes</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">get_gini_impurity</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0.5</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Between 0.5 and 1?</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">get_gini_impurity</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">4</span>))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0.75</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Gini impurity in the case of two classes is constrained between zero and half, with zero being minimum uncertainty and half being maximum uncertainty. However with more than two classes, the measure will always be in between zero and one. This is in contrast to entropy which has no upper bound. Once again, note that higher values of gini impurity represent greater uncertainty and vice versa.</p>
+</section>
+<section id="information-gain" class="level2">
+<h2 class="anchored" data-anchor-id="information-gain">Information gain</h2>
+<p>Information gain serves an extension to the calculation of entropy. It is the difference in entropy between a parent node and the average entropy of its children.</p>
+<p><span class="math display">\[\begin{align*}
+\overbrace{\mbox{IG}(T,a)}^{\mbox{information gain}} &amp;= \overbrace{H(T)}^{\mbox{entropy of parent}} - \overbrace{H(T|a)}^{\mbox{average entropy of children}} &amp; \\
+\end{align*}\]</span></p>
+<p>While we seek to minimize entropy, we alternatively seek to maximize information gain. Or in other words, we seek to find the split with the most information gain.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>get_information_gain <span class="ot">&lt;-</span> <span class="cf">function</span>(parent, l_child, r_child, <span class="at">mode =</span> <span class="st">"entropy"</span>){</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Get weights in each child</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  l_child <span class="ot">=</span> <span class="fu">as.data.frame</span>(l_child)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  r_child <span class="ot">=</span> <span class="fu">as.data.frame</span>(r_child)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  weight_l <span class="ot">=</span> <span class="fu">nrow</span>(l_child)<span class="sc">/</span><span class="fu">nrow</span>(parent)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  weight_r <span class="ot">=</span> <span class="fu">nrow</span>(r_child)<span class="sc">/</span><span class="fu">nrow</span>(parent)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Choose mode</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(mode <span class="sc">==</span> <span class="st">"gini"</span>){</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    gain <span class="ot">=</span> <span class="fu">get_gini_impurity</span>(parent[, <span class="fu">ncol</span>(parent)]) <span class="sc">-</span> (weight_l<span class="sc">*</span><span class="fu">get_gini_impurity</span>(l_child[, <span class="fu">ncol</span>(l_child)]) <span class="sc">+</span> weight_r<span class="sc">*</span><span class="fu">get_gini_impurity</span>(r_child[, <span class="fu">ncol</span>(r_child)]))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    gain <span class="ot">=</span> <span class="fu">get_entropy</span>(<span class="fu">as.character</span>(parent[, <span class="fu">ncol</span>(parent)])) <span class="sc">-</span> (weight_l<span class="sc">*</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(l_child[, <span class="fu">ncol</span>(l_child)])) <span class="sc">+</span> weight_r<span class="sc">*</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(r_child[, <span class="fu">ncol</span>(r_child)])))</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="stopping-conditions" class="level1">
+<h1>Stopping conditions</h1>
+<p>Now that we know how to find the best split (the one that reduces the most uncertainty) and that decision trees essentially recursively split the data into regions, it is important to consider the stopping conditions. This is primarily due to the fact that the CART (Classification and Regression Trees) algorithms are greedy. What I mean by them being ‘greedy’ is that they will keep splitting the data in an effort to reduce entropy unless told otherwise. This produces a ‘locally optimal solution’ rather than a ‘globally optimal solution’; in simpler terms, we could say that a decision tree never reconsiders its choices, and only makes whatever choice seems best at the moment. While we can not necessarily prevent the ‘live in the moment’ behavior of the decision tree, it is important to stop the decision tree from partitioning our data infinitely. A solution in which we do not restrain the algorithm will be computationally expensive, difficult to interpret and probably be overfitted to the data.</p>
+<ul>
+<li><strong>Minimum sample for a new node</strong>: Some implementations of CART algorithms such as the one in <code>rpart</code> often require at least 5 observations to create a new node</li>
+<li><strong>Minimum amount of information gain or entropy</strong>: We could also tell the decision tree that is not able to create a new node unless the entropy for that split meets a threshold value</li>
+<li><strong>Minimum depth of node</strong>: A pre-specified limit for the depth will stop the algorithm from making too many splits</li>
+</ul>
+</section>
+<section id="helper-functions" class="level1">
+<h1>Helper functions</h1>
+<p>Before we begin creating our helper function for the decision tree classifier, it important to define what form the input data will be in for our algorithm. We will use the following form</p>
+<span class="math display">\[\begin{bmatrix}
+  x_{1} &amp; x_{2} &amp; x_{3} &amp; x_{4} &amp; \dots &amp; x_{k} &amp; Y
+\end{bmatrix}\]</span>
+<p>where <span class="math inline">\(x_{1}, x_{2}, x_{3}, ... , x_{k}\)</span> are the k features (variables) we will use to train our model and where <span class="math inline">\(Y\)</span> is the target variable (the labels)</p>
+<section id="train-test-split" class="level2">
+<h2 class="anchored" data-anchor-id="train-test-split">Train-test split</h2>
+<p>We will first code function to split our data into a training data set, which will be used to train the decision tree, and then a testing data set, which will be used to test how well the decision tree performs. Note that this function is not a helper that will be called by the main algorithm, but I could not find a better section to put this under.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>get_train_test <span class="ot">&lt;-</span> <span class="cf">function</span>(df, train_size){</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  observations <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Option for a proportion or number</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(train_size <span class="sc">&lt;</span> <span class="dv">1</span>){</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    test_size_f <span class="ot">=</span> <span class="fu">round</span>(train_size<span class="sc">*</span><span class="fu">nrow</span>(df))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    test_size_f <span class="ot">=</span> train_size</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Get index of train values</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  train_index <span class="ot">=</span> <span class="fu">sample</span>(observations, <span class="at">size =</span> test_size_f)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  test_observations <span class="ot">=</span> <span class="fu">nrow</span>(df) <span class="sc">-</span> <span class="fu">length</span>(train_index)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Get index of test values</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  test_index <span class="ot">=</span> <span class="fu">double</span>(<span class="at">length =</span> <span class="fu">length</span>(observations))</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(observations)){</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">any</span>(observations[i] <span class="sc">==</span> train_index)){</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      <span class="cf">next</span>(i)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>      test_index[i] <span class="ot">=</span> observations[i]</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  test_index_f <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">subset</span>(test_index, test_index <span class="sc">&gt;</span> <span class="dv">0</span>))</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Create df's from index values</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  train_df <span class="ot">=</span> df[train_index, ]</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  test_df <span class="ot">=</span> df[test_index_f, ]</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(train_df, test_df))</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="checking-the-purity" class="level2">
+<h2 class="anchored" data-anchor-id="checking-the-purity">Checking the purity</h2>
+<p>This helper will be used to check whether a subset of the original data is pure. As discussed before, a pure node is a point at which the subset of the original data contains only one class. If we find that the data is pure, we would not want to continue splitting the data, as entropy would be zero at that point. In other words, we would have full certainty over the class of the points in that node.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>check_purity <span class="ot">&lt;-</span> <span class="cf">function</span>(data){</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Get unique labels</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  labels <span class="ot">=</span> <span class="fu">length</span>(<span class="fu">unique</span>(<span class="fu">pull</span>(data[, <span class="sc">-</span><span class="dv">1</span>])))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Check if there is only one</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ifelse</span>(labels <span class="sc">==</span> <span class="dv">1</span>, <span class="fu">return</span>(<span class="cn">TRUE</span>), <span class="fu">return</span>(<span class="cn">FALSE</span>))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="classification" class="level2">
+<h2 class="anchored" data-anchor-id="classification">Classification</h2>
+<p>After we have decided to stop creating new split at some point of our tree, most likely when a stopping condition is reached, we need to return a classification for the points in whichever subset of the original data we have at the node. If the data is pure, then our choice of what classification to make is rather simple. If the data is not pure, we will use the class that appears the most among the data points.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>classify_data <span class="ot">&lt;-</span> <span class="cf">function</span>(data){</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Get labels</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  get_labels <span class="ot">=</span> <span class="fu">pull</span>(data[, <span class="sc">-</span><span class="dv">1</span>])</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Get label frequency and max</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  label_freq <span class="ot">=</span> <span class="fu">table</span>(get_labels)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  label_freq_a <span class="ot">=</span> <span class="fu">as.data.frame</span>(label_freq)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  label_dom <span class="ot">=</span> <span class="fu">max</span>(label_freq)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Get classification</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(label_freq_a)){</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(label_freq_a<span class="sc">$</span>Freq[i] <span class="sc">==</span> label_dom){</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>      classification <span class="ot">=</span> <span class="fu">as.character</span>(label_freq_a<span class="sc">$</span>get_labels[i])</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>      <span class="cf">next</span>(i)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(classification)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="splitting-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="splitting-the-data">Splitting the data</h2>
+<p>I am going to, un-intuitively, make the helper that will split the data before making the helper for the potential splits. Once we have a potential split value for a given feature we need to separate the parent node into two children. Anything above the value (<span class="math inline">\(&gt;\)</span>) will be coined as the right node, and anything below the value (<span class="math inline">\(\leq\)</span>) will be termed the left node. These two nodes, together, are the children of the parent node.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>split_data <span class="ot">&lt;-</span> <span class="cf">function</span>(data, split_column, split_value){</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  split_c <span class="ot">=</span> data[[split_column]]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Filter the data into above and below</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  data_below <span class="ot">=</span> data[split_c <span class="sc">&lt;=</span> split_value, ]</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  data_above <span class="ot">=</span> data[split_c <span class="sc">&gt;</span> split_value, ]</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(data_above, data_below))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="potential-and-best-splits" class="level2">
+<h2 class="anchored" data-anchor-id="potential-and-best-splits">Potential and best splits</h2>
+<p>The potential split helper(s) are arguably the most important helper. These helpers, as the name suggests, will search our data for the split that provides the most certainty regarding the classes of the child nodes. It will return a feature, and a value for that feature for which we must split. First and foremost, we need to consider the manner in which we will search our data. There are several ways to approach the search stage. One such way is to increment through the range of a feature by a learning rate; at each of these increment, we will calculate the entropy of a split made at that point. The effectiveness of this approach is largely determined by the learning rate. A very small learning rate will take a long time iterate through the data, but will be more accurate. The converse is also true for a large learning rate. Another approach would be to only have potential splits be made on each real value a feature has. The middle ground between these approaches is to check for a potential splits in the middle of two values for a given features. I will use the third approach as it is the easiest to implement</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>get_potential_splits <span class="ot">&lt;-</span> <span class="cf">function</span>(data){</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Sorting stage</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">=</span> data</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  col_n <span class="ot">=</span> <span class="fu">ncol</span>(data) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>col_n){</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    data_i <span class="ot">=</span> <span class="fu">sort</span>(data[, i])</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    data[, i] <span class="ot">=</span> data_i</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Creating the splits</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  dat <span class="ot">=</span> data[<span class="dv">0</span>, ]</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>col_n){</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">nrow</span>(data)){</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>      curr_val <span class="ot">=</span> data[i, j]</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>      previous_val <span class="ot">=</span> data[(i<span class="dv">-1</span>), j]</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>      potential_val <span class="ot">=</span> (curr_val <span class="sc">+</span> previous_val)<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>      dat[(i<span class="dv">-1</span>), j] <span class="ot">=</span> potential_val</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  dat[<span class="fu">nrow</span>(dat)<span class="sc">+</span><span class="dv">1</span>, ] <span class="ot">=</span> data[<span class="fu">nrow</span>(data), ]</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  dat <span class="ot">=</span> dat[, <span class="dv">1</span><span class="sc">:</span>col_n]</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  potential_splits <span class="ot">=</span> <span class="fu">as.data.frame</span>(dat)</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">ncol</span>(potential_splits) <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">colnames</span>(potential_splits)[[<span class="dv">1</span>]] <span class="ot">=</span> <span class="fu">colnames</span>(data)[[<span class="dv">1</span>]]</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(potential_splits)</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>calculate_overall_entropy <span class="ot">&lt;-</span> <span class="cf">function</span>(data_below, data_above){</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Proportion of samples in left and right children</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">nrow</span>(data_below) <span class="sc">+</span> <span class="fu">nrow</span>(data_above)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  p_data_below <span class="ot">=</span> <span class="fu">nrow</span>(data_below)<span class="sc">/</span>n</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  p_data_above <span class="ot">=</span> <span class="fu">nrow</span>(data_above)<span class="sc">/</span>n</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Calculate overall entropy</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  overall_entropy <span class="ot">=</span> ((p_data_below<span class="sc">*</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(<span class="fu">pull</span>(data_below[, <span class="sc">-</span><span class="dv">1</span>])))) <span class="sc">+</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                       (p_data_above<span class="sc">*</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(<span class="fu">pull</span>(data_above[, <span class="sc">-</span><span class="dv">1</span>])))))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(overall_entropy)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>determine_best_split <span class="ot">&lt;-</span> <span class="cf">function</span>(data, potential_splits){</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Initialize overall entropy and col </span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  running_entropy <span class="ot">=</span> <span class="dv">9999</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  best_split_value <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  best_split_column <span class="ot">=</span> <span class="st">""</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Find best entropy over potential splits</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(potential_splits)){</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">unique</span>(potential_splits[, j])){</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>      mask_val <span class="ot">=</span> i </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>      mask_col <span class="ot">=</span> j</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>      splits <span class="ot">=</span> <span class="fu">split_data</span>(<span class="at">data =</span> data, <span class="at">split_column =</span> mask_col, <span class="at">split_value =</span> mask_val)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>      relative_entropy <span class="ot">=</span> <span class="fu">calculate_overall_entropy</span>(<span class="at">data_above =</span> splits[[<span class="dv">1</span>]], <span class="at">data_below =</span> splits[[<span class="dv">2</span>]])</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(relative_entropy <span class="sc">&lt;</span> running_entropy){</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        running_entropy <span class="ot">=</span> relative_entropy</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>        best_split_value <span class="ot">=</span> mask_val</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        best_split_column <span class="ot">=</span> <span class="fu">colnames</span>(potential_splits)[j]</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">next</span>(i)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(best_split_column, best_split_value))</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>determine_best_split <span class="ot">&lt;-</span> <span class="cf">function</span>(data, potential_splits, <span class="at">mode =</span> <span class="st">"gini"</span>){</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Initialize overall entropy and col </span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  running_gain <span class="ot">=</span> <span class="sc">-</span><span class="cn">Inf</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  best_split_value <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  best_split_column <span class="ot">=</span> <span class="st">""</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Find best entropy over potential splits</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(potential_splits)){</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">unique</span>(potential_splits[, j])){</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>      mask_val <span class="ot">=</span> i </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>      mask_col <span class="ot">=</span> j</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>      splits <span class="ot">=</span> <span class="fu">split_data</span>(<span class="at">data =</span> data, <span class="at">split_column =</span> mask_col, <span class="at">split_value =</span> mask_val)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>      relative_gain <span class="ot">=</span> <span class="fu">get_information_gain</span>(<span class="at">parent =</span> data, <span class="at">r_child =</span> splits[[<span class="dv">1</span>]], <span class="at">l_child =</span> splits[[<span class="dv">2</span>]], <span class="at">mode =</span> mode)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(relative_gain <span class="sc">&gt;</span> running_gain){</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        running_gain <span class="ot">=</span> relative_gain</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        best_split_value <span class="ot">=</span> mask_val</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        best_split_column <span class="ot">=</span> <span class="fu">colnames</span>(potential_splits)[j]</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">next</span>(i)</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(best_split_column, best_split_value))</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">#might need to come back in future and add as.character() to gini as well</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="the-main-algorithm" class="level1">
+<h1>The main algorithm</h1>
+<section id="recursive-function" class="level2">
+<h2 class="anchored" data-anchor-id="recursive-function">Recursive function</h2>
+<p>The main algorithm is a recursive function that calls the helpers to split the data, given that the stopping conditions have not been violated. In the below function, the stopping conditions are first checked. There are three conditions implemented. Namely, whether the data is fully pure, whether there is enough data points to create a new splitting node, and whether the maximum depth of the tree has been reached. The function then uses the helpers that were created earlier to recursively split the data, generating a ‘yes’ and ‘no’ answer. It prints all of this information as it does it; more nuanced code would likely build and print the tree in this same function, but I was unable to build the necessary code to do so</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>decision_tree_algorithm <span class="ot">&lt;-</span> <span class="cf">function</span>(df, </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">counter =</span> <span class="dv">1</span>, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                                    min_samples, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                                    max_depth, <span class="at">is.child =</span> <span class="st">"root"</span>){</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">=</span> df</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Check whether stopping conditions have been violated</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">any</span>(<span class="fu">check_purity</span>(data), <span class="fu">nrow</span>(data) <span class="sc">&lt;</span> min_samples, (counter <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">==</span> max_depth)){</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    classification <span class="ot">=</span> <span class="fu">classify_data</span>(data)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">print</span>(<span class="fu">paste</span>(classification, is.child, counter)))</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>   <span class="co">#Recursive part</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Helper functions</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    potential_splits <span class="ot">=</span> <span class="fu">get_potential_splits</span>(data)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    split_g <span class="ot">=</span> <span class="fu">determine_best_split</span>(data, potential_splits)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    split_column <span class="ot">=</span> split_g[[<span class="dv">1</span>]]</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    split_value <span class="ot">=</span> split_g[[<span class="dv">2</span>]]</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    data_g <span class="ot">=</span> <span class="fu">split_data</span>(data, split_column, split_value)</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    data_above <span class="ot">=</span> data_g[[<span class="dv">1</span>]]</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    data_below <span class="ot">=</span> data_g[[<span class="dv">2</span>]]</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste</span>(split_column, split_value, is.child, counter))</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Find the answers</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    yes_answer <span class="ot">=</span> <span class="fu">decision_tree_algorithm</span>(<span class="at">df =</span> data_below, <span class="at">counter =</span> counter <span class="sc">+</span> <span class="dv">1</span>, min_samples, max_depth, <span class="at">is.child =</span> <span class="st">"yes &lt;="</span>)</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    no_answer <span class="ot">=</span> <span class="fu">decision_tree_algorithm</span>(<span class="at">df =</span> data_above, <span class="at">counter =</span> counter <span class="sc">+</span> <span class="dv">1</span>, min_samples, max_depth, <span class="at">is.child =</span> <span class="st">"no &gt;"</span>)</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>So the main algorithm yields the following output on the salmon-fish data…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">decision_tree_algorithm</span>(<span class="at">df =</span> salmon_fish, <span class="at">min_samples =</span> <span class="dv">1</span>, <span class="at">max_depth =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "length 2.99601479397271 root 1"
+[1] "tuna yes &lt;= 2"
+[1] "weight 4.00670743566802 no &gt; 2"
+[1] "salmon yes &lt;= 3"
+[1] "length 6.97822538046186 no &gt; 3"
+[1] "tuna yes &lt;= 4"
+[1] "tuna no &gt; 4"</code></pre>
+</div>
+</div>
+<p>Now this is obviously not what a decision tree looks like (as was shown earlier). But it is a step in the right direction. There are all the essential components of a decision tree in the jumble of output, but it requires sorting to be more comprehensible.</p>
+</section>
+<section id="organising-function" class="level2">
+<h2 class="anchored" data-anchor-id="organising-function">Organising function</h2>
+<p>This function calls the decision tree recursive algorithm, captures the output and re-formats in into a data frame. An efficient implementation will likely not need this function, but since I was unable to fully incorporate the whole process in the recursive function, here we are.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>decision_tree <span class="ot">&lt;-</span> <span class="cf">function</span>(df, min_samples, max_depth){</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Store decisions and reformat</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  decisions <span class="ot">=</span> <span class="fu">capture.output</span>(<span class="fu">decision_tree_algorithm</span>(<span class="at">df =</span> df, <span class="at">min_samples =</span> min_samples, <span class="at">max_depth =</span> max_depth), <span class="at">append =</span> F)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  decisions_df <span class="ot">=</span> <span class="fu">strsplit</span>(decisions, <span class="st">" "</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  decisions_cl <span class="ot">=</span> <span class="fu">sapply</span>(decisions_df, <span class="cf">function</span>(x) <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\"</span><span class="st">"</span>, <span class="st">""</span>, x))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Make list of equal length</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(decisions_cl)){</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(decisions_cl[[i]]) <span class="sc">!=</span> <span class="dv">6</span>){</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>      decisions_cl[[i]] <span class="ot">=</span> <span class="fu">append</span>(decisions_cl[[i]], <span class="cn">NA</span>, <span class="at">after =</span> <span class="dv">4</span>)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>      decisions_cl[[i]] <span class="ot">=</span> <span class="fu">append</span>(decisions_cl[[i]], <span class="cn">NA</span>, <span class="at">after =</span> <span class="dv">2</span>)</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    }} <span class="cf">else</span> { <span class="cf">next</span>(i) }}</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Convert to df and reformat again</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>  decisions_df <span class="ot">=</span> <span class="fu">as.data.frame</span>(decisions_cl)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>  decisions_t <span class="ot">=</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(decisions_df))</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>  decisions_x <span class="ot">=</span> decisions_t[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row.names</span>(decisions_x) <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(decisions_x)</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(decisions_x) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"node"</span>, <span class="st">"split.val"</span>, <span class="st">"is.child"</span>, <span class="st">"split"</span>, <span class="st">"depth"</span>)</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Sort the df</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>  decisions_x <span class="ot">=</span> decisions_x[<span class="fu">order</span>(decisions_x<span class="sc">$</span>depth), ]</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(decisions_x)</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The organising function returns output that looks like this</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>salmon_df <span class="ot">=</span> <span class="fu">decision_tree</span>(<span class="at">df =</span> salmon_fish, <span class="at">min_samples =</span> <span class="dv">1</span>, <span class="at">max_depth =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This is just what we got from the recursive function, but re-organised into a data frame format. Once again this is not in the tree format, but a rather a tabular view of each node in the tree. However if we compare our data frame on the right above to a decision tree created using rpart, it is clear that they are essentially the same. Ideally I would have wanted to somehow take the data frame that is returned from the organising function, and somehow printed it out in a tree format in the console. But that is a piece of the puzzle that I am yet to solve for now.</p>
+</section>
+</section>
+<section id="remarks" class="level1">
+<h1>Remarks</h1>
+<p>If it isn’t already clear, you might have noticed that this implementations leaves a lot to be desired. For instance, the tree created by the functions I have made are not in a tree format, but rather a rectangular format. Below, I have highlighted some issues or deficiencies in what I have shown above</p>
+<ul>
+<li><p>Converting data frame tree output into a binary tree that can be printed to the console</p></li>
+<li><p>Post pruning; sometimes a split may not necessarily be useful. Removing branches from the tree after building it can greatly increase its comprehensibility</p></li>
+<li><p>A classification function. The whole point of the decision tree was to enable the classification of a point that is not in our data set. This function would convert the tree into a series of ifelse statements which can be traversed to classify a point</p></li>
+<li><p>Regression. So far, I have completely omitted the discussion of decision tree regression. A decision tree regressor can be used to predict a value</p></li>
+<li><p>Option to minimise over different metrics. Gini-impurity, information gain and entropy are all different metrics. Minimising over these metrics does not produce the same tree everytime</p></li>
+<li><p>Categorical data. I only made an implementation that works on numerical data. As it turns out splits can also be made over categorical data.</p></li>
+<li><p>An OOP implementation. The more and more I think about it, OOP might be better suited to implementing this algorithm; robustness and efficiency.</p></li>
+</ul>
+<p>One last thing. While I did not make a fully functional or robust solution by any means, this implementation did heighten my knowledge of decision trees. No implementation by a single user is likely to be better than existing libraries. But then again no one attempts to solve this kind of problem with that intention. Understanding and a nice coding challenge. That is where the real value in attempting this problem lies.</p>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<ul>
+<li><a href="https://github.com/SebastianMantey/Decision-Tree-from-Scratch">SebastianMantey implementation of a decision tree from scratch in python</a></li>
+<li><a href="https://github.com/bryantravissmith/FromScratch/blob/master/SupervisedLearning/DecisionTrees/Implementing%20Decision%20Trees%20From%20Scratch%20Using%20R.ipynb">Bryan Travis Smith OOP implementation of a decision tree in both R and python</a></li>
+<li><a href="https://www.youtube.com/watch?v=dCez6oGZilY">Rivik-math video explaining logic behind a decision tree classifer</a></li>
+<li><a href="https://www.youtube.com/watch?v=sgQAhG5Q7iY">Normalized nerd series on decision tree classifiers</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><i class="fa-regular fa-copyright" aria-label="copyright"></i> Rashmin Chitale, 2024<br> All content licensed under <i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> <i class="fa-brands fa-creative-commons-by" aria-label="creative-commons-by"></i> <i class="fa-brands fa-creative-commons-sa" aria-label="creative-commons-sa"></i> <i class="fa-brands fa-creative-commons-nc" aria-label="creative-commons-nc"></i> <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">(CC BY-NC-SA 4.0)</a><br></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Made with <i class="fa-brands fa-r-project" aria-label="r-project"></i>, <a href="https://quarto.org/">Quarto</a> and code snippets from <a href="../..\posts/quarto-website-migration.html">these folks</a> <i class="fa-solid fa-users" aria-label="users"></i> <br> <a href="https://github.com/Rcshmin/rcpersonalweb">Source code at GitHub</a> <i class="fa-brands fa-github" aria-label="github"></i></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

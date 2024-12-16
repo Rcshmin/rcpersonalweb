@@ -18,14 +18,12 @@ website:
         href: https://au.linkedin.com/in/rashmin-chitale-0aa989173
   page-footer:
     left: |
-      {{< fa regular copyright >}} Andreas Handel, 2023<br>
+      {{< fa regular copyright >}} Rashmin Chitale, 2024<br>
       All content licensed under {{< fa brands creative-commons >}}
       {{< fa brands creative-commons-by >}} {{< fa brands creative-commons-sa >}} {{< fa brands creative-commons-nc >}} [(CC BY-NC-SA 4.0)](http://creativecommons.org/licenses/by-nc-sa/4.0/)<br>
-      Opinions are my own and do not represent my employer
     right: |
-      Made with {{< fa brands r-project >}} and [Quarto](https://quarto.org/)<br>
-      Inspiration and code snippets taken from [these folks](/posts/quarto-website-migration.html)<br>
-      [Source at {{< fa brands github >}} GitHub](https://github.com/andreashandel/andreashandelwebsite)
+      Made with {{< fa brands r-project >}}, [Quarto](https://quarto.org/) and code snippets from [these folks](/posts/quarto-website-migration.html) {{< fa solid users >}} <br>
+      [Source code at GitHub](https://github.com/Rcshmin/rcpersonalweb) {{< fa brands github >}}
 
 format:
   html:
