@@ -3,6 +3,16 @@
 # re-render posts only when a change to the source file is made ----
 freeze: auto
 
-# enable banner style title blocks ----
+# enable banner style title blocks on listings page ----
 title-block-banner: true
-toc: true
+
+# enable table of content for all posts ----
+toc: false
+
+# change margins for all posts ----
+grid:
+  body-width: 584px
+
+# code block font and scale ----
+monofont: "Atkinson Hyperlegible"
+  

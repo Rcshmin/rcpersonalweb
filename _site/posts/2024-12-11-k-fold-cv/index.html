@@ -142,7 +142,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -231,22 +231,7 @@ window.Quarto = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#what-is-model-validation" id="toc-what-is-model-validation" class="nav-link active" data-scroll-target="#what-is-model-validation">What is model validation?</a></li>
-  <li><a href="#different-types-of-model-validation" id="toc-different-types-of-model-validation" class="nav-link" data-scroll-target="#different-types-of-model-validation">Different types of model validation</a>
-  <ul class="collapse">
-  <li><a href="#train-test-split" id="toc-train-test-split" class="nav-link" data-scroll-target="#train-test-split">Train-test split</a></li>
-  <li><a href="#k-fold-cross-validation" id="toc-k-fold-cross-validation" class="nav-link" data-scroll-target="#k-fold-cross-validation">K-fold cross validation</a></li>
-  </ul></li>
-  <li><a href="#the-algorithm" id="toc-the-algorithm" class="nav-link" data-scroll-target="#the-algorithm">The algorithm</a></li>
-  <li><a href="#choice-of-k-repeated-cv-and-loocv" id="toc-choice-of-k-repeated-cv-and-loocv" class="nav-link" data-scroll-target="#choice-of-k-repeated-cv-and-loocv">Choice of <span class="math inline">\(k\)</span>, repeated CV and LOOCV</a></li>
-  </ul>
-</nav>
-    </div>
+    
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -302,24 +287,26 @@ window.Quarto = {
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  t_data <span class="ot">=</span> t_data[<span class="fu">sample</span>(<span class="fu">nrow</span>(t_data)), ]</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row.names</span>(t_data) <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(t_data)</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Assign partition and indices</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  indices <span class="ot">=</span> <span class="fu">sample</span>(<span class="at">x =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(t_data), <span class="at">size =</span> <span class="fu">nrow</span>(t_data), <span class="at">replace =</span> <span class="cn">FALSE</span>))</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  primary <span class="ot">=</span> <span class="fu">rep</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="st">"train"</span>), sample_train)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  secondary <span class="ot">=</span> <span class="fu">rep</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="st">"test"</span>), sample_test)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  total <span class="ot">=</span> <span class="fu">append</span>(primary, secondary)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  t_data<span class="sc">$</span>my.folds[indices] <span class="ot">=</span> total</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(t_data)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  indices <span class="ot">=</span> </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sample</span>(<span class="at">x =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(t_data), <span class="at">size =</span> <span class="fu">nrow</span>(t_data), <span class="at">replace =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  primary <span class="ot">=</span> <span class="fu">rep</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="st">"train"</span>), sample_train)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  secondary <span class="ot">=</span> <span class="fu">rep</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="st">"test"</span>), sample_test)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  total <span class="ot">=</span> <span class="fu">append</span>(primary, secondary)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  t_data<span class="sc">$</span>my.folds[indices] <span class="ot">=</span> total</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(t_data)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Just for the sake of example, I have shown how you can use the code in conjunction with other packages, to calculate a performance metric.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Example of using a train test split</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">23891</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>ttsplit <span class="ot">=</span> <span class="fu">train_test_split</span>(<span class="at">data =</span> iris, <span class="at">test =</span> <span class="fl">0.1</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>NBclassifier <span class="ot">=</span> <span class="fu">naiveBayes</span>(Species <span class="sc">~</span> Sepal.Length <span class="sc">+</span> Sepal.Width <span class="sc">+</span> Petal.Length <span class="sc">+</span> Petal.Width, </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">data  =</span> <span class="fu">subset</span>(ttsplit, ttsplit<span class="sc">$</span>my.folds <span class="sc">==</span> <span class="st">"train"</span>))</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>ttsplit1 <span class="ot">=</span> <span class="fu">subset</span>(ttsplit, ttsplit<span class="sc">$</span>my.folds <span class="sc">==</span> <span class="st">"test"</span>)[, <span class="sc">-</span><span class="dv">6</span>]</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>ttsplit1<span class="sc">$</span>prediction <span class="ot">=</span> <span class="fu">predict</span>(NBclassifier, <span class="at">newdata =</span> ttsplit1, <span class="at">type =</span> <span class="st">"class"</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(ttsplit1<span class="sc">$</span>Species, ttsplit1<span class="sc">$</span>prediction)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>NBclassifier <span class="ot">=</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">naiveBayes</span>(Species <span class="sc">~</span> Sepal.Length <span class="sc">+</span> Sepal.Width <span class="sc">+</span> Petal.Length <span class="sc">+</span> Petal.Width, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">data  =</span> <span class="fu">subset</span>(ttsplit, ttsplit<span class="sc">$</span>my.folds <span class="sc">==</span> <span class="st">"train"</span>))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>ttsplit1 <span class="ot">=</span> <span class="fu">subset</span>(ttsplit, ttsplit<span class="sc">$</span>my.folds <span class="sc">==</span> <span class="st">"test"</span>)[, <span class="sc">-</span><span class="dv">6</span>]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>ttsplit1<span class="sc">$</span>prediction <span class="ot">=</span> <span class="fu">predict</span>(NBclassifier, <span class="at">newdata =</span> ttsplit1, <span class="at">type =</span> <span class="st">"class"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(ttsplit1<span class="sc">$</span>Species, ttsplit1<span class="sc">$</span>prediction)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            
              setosa versicolor virginica
@@ -369,21 +356,23 @@ window.Quarto = {
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Assign partition number</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">nrow</span>(data) <span class="sc">%%</span> k <span class="sc">==</span> <span class="dv">0</span>){</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Vector of randomized indices</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    indices <span class="ot">=</span> <span class="fu">sample</span>(<span class="at">x =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(k_data)), <span class="at">size =</span> <span class="fu">nrow</span>(k_data), <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Assigning indices</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    k_data<span class="sc">$</span>my.folds[indices] <span class="ot">=</span> <span class="fu">rep</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>k), <span class="fu">rep</span>(<span class="fu">nrow</span>(k_data)<span class="sc">/</span>k, k))</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  } </span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">#If %% != 0, then randomize the remainder, after equally distributing the floor</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    indices <span class="ot">=</span> <span class="fu">sample</span>(<span class="at">x =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(k_data)), <span class="at">size =</span> <span class="fu">nrow</span>(k_data), <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    primary <span class="ot">=</span> <span class="fu">rep</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>k), <span class="fu">rep</span>(<span class="fu">floor</span>(<span class="fu">nrow</span>(k_data)<span class="sc">/</span>k), k))</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    secondary <span class="ot">=</span> <span class="fu">sample</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>k), <span class="at">replace =</span> <span class="cn">FALSE</span>, <span class="at">size =</span> <span class="fu">nrow</span>(k_data) <span class="sc">%%</span> k)</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    total <span class="ot">=</span> <span class="fu">append</span>(primary, secondary)</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    k_data<span class="sc">$</span>my.folds[indices] <span class="ot">=</span> total</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(k_data)</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    indices <span class="ot">=</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sample</span>(<span class="at">x =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(k_data)), <span class="at">size =</span> <span class="fu">nrow</span>(k_data), <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Assigning indices</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    k_data<span class="sc">$</span>my.folds[indices] <span class="ot">=</span> <span class="fu">rep</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>k), <span class="fu">rep</span>(<span class="fu">nrow</span>(k_data)<span class="sc">/</span>k, k))</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  } </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">#If %% != 0, then randomize the remainder, after equally distributing the floor</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    indices <span class="ot">=</span> </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sample</span>(<span class="at">x =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(k_data)), <span class="at">size =</span> <span class="fu">nrow</span>(k_data), <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    primary <span class="ot">=</span> <span class="fu">rep</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>k), <span class="fu">rep</span>(<span class="fu">floor</span>(<span class="fu">nrow</span>(k_data)<span class="sc">/</span>k), k))</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    secondary <span class="ot">=</span> <span class="fu">sample</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>k), <span class="at">replace =</span> <span class="cn">FALSE</span>, <span class="at">size =</span> <span class="fu">nrow</span>(k_data) <span class="sc">%%</span> k)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    total <span class="ot">=</span> <span class="fu">append</span>(primary, secondary)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    k_data<span class="sc">$</span>my.folds[indices] <span class="ot">=</span> total</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(k_data)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>iris_split <span class="ot">=</span> <span class="fu">k_fold_split</span>(<span class="at">k =</span> <span class="dv">10</span>, <span class="at">data =</span> iris)</span>

@@ -8,6 +8,11 @@ date: 10-24-2022
 categories: [datascience, R] # self-defined categories
 image: images/knn-listing-dis-image.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+format:
+  html:
+    grid:
+      margin-width: 450px
+      body-width: 600px
 ---
 
 ```{r setup, include=FALSE}
@@ -230,7 +235,9 @@ testData <- iris[-dt,]
 accuracy = c()
 for(j in 1:20){
 for(i in 1:nrow(testData)){
-testData[i, 6] = knn_classify(df = trainData, k = j, new_point = c(as.numeric(testData[i, 1:4])))
+testData[i, 6] = 
+  knn_classify(df = trainData, k = j, 
+               new_point = c(as.numeric(testData[i, 1:4])))
 if(testData[i, 6] == testData[i, 5]){
   testData[i, 7] = TRUE
 } else {
@@ -263,7 +270,8 @@ Back to the problem at hand. Earlier we saw that there were many values of $k$ w
 k = 10
 z = 40
 set.seed(23131)
-k_fold_data = mutate(iris, my.folds = sample(1:k, size = nrow(iris), replace = TRUE))
+k_fold_data = 
+  mutate(iris, my.folds = sample(1:k, size = nrow(iris), replace = TRUE))
 table(k_fold_data$my.folds)
 
 #a = z is no of neighbors, b is which partition to use as test
@@ -355,7 +363,8 @@ iris_parallel_plot = iris_id %>%
               names_to = "Feature", values_to = "Feature.Value")
 
 #Make plot
-ggplot(data = iris_parallel_plot, aes(x = Feature, y = Feature.Value, color = Species, group = V6)) +
+ggplot(data = iris_parallel_plot, 
+       aes(x = Feature, y = Feature.Value, color = Species, group = V6)) +
   geom_point() + 
   geom_line() + 
   scale_x_discrete(limits = c("Sepal.Length", 

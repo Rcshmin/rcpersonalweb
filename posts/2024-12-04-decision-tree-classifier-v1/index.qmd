@@ -241,7 +241,10 @@ get_information_gain <- function(parent, l_child, r_child, mode = "entropy"){
   weight_r = nrow(r_child)/nrow(parent)
   #Choose mode
   if(mode == "gini"){
-    gain = get_gini_impurity(parent[, ncol(parent)]) - (weight_l*get_gini_impurity(l_child[, ncol(l_child)]) + weight_r*get_gini_impurity(r_child[, ncol(r_child)]))
+    gain = 
+      get_gini_impurity(parent[, ncol(parent)]) 
+    - (weight_l*get_gini_impurity(l_child[, ncol(l_child)]) 
+       + weight_r*get_gini_impurity(r_child[, ncol(r_child)]))
   } else {
     gain = get_entropy(as.character(parent[, ncol(parent)])) - (weight_l*get_entropy(as.character(l_child[, ncol(l_child)])) + weight_r*get_entropy(as.character(r_child[, ncol(r_child)])))
   }
@@ -395,8 +398,9 @@ calculate_overall_entropy <- function(data_below, data_above){
   p_data_below = nrow(data_below)/n
   p_data_above = nrow(data_above)/n
   #Calculate overall entropy
-  overall_entropy = ((p_data_below*get_entropy(as.character(pull(data_below[, -1])))) +
-                       (p_data_above*get_entropy(as.character(pull(data_above[, -1])))))
+  overall_entropy = 
+    ((p_data_below*get_entropy(as.character(pull(data_below[, -1])))) 
+     + (p_data_above*get_entropy(as.character(pull(data_above[, -1])))))
   return(overall_entropy)
 }
 ```
@@ -412,8 +416,11 @@ determine_best_split <- function(data, potential_splits){
     for(i in unique(potential_splits[, j])){
       mask_val = i 
       mask_col = j
-      splits = split_data(data = data, split_column = mask_col, split_value = mask_val)
-      relative_entropy = calculate_overall_entropy(data_above = splits[[1]], data_below = splits[[2]])
+      splits = 
+        split_data(data = data, split_column = mask_col, split_value = mask_val)
+      relative_entropy = 
+        calculate_overall_entropy(data_above = splits[[1]], 
+                                  data_below = splits[[2]])
       if(relative_entropy < running_entropy){
         running_entropy = relative_entropy
         best_split_value = mask_val
@@ -439,8 +446,11 @@ determine_best_split <- function(data, potential_splits, mode = "gini"){
     for(i in unique(potential_splits[, j])){
       mask_val = i 
       mask_col = j
-      splits = split_data(data = data, split_column = mask_col, split_value = mask_val)
-      relative_gain = get_information_gain(parent = data, r_child = splits[[1]], l_child = splits[[2]], mode = mode)
+      splits = 
+        split_data(data = data, split_column = mask_col, split_value = mask_val)
+      relative_gain =
+        get_information_gain(parent = data, r_child = splits[[1]], 
+                             l_child = splits[[2]], mode = mode)
       if(relative_gain > running_gain){
         running_gain = relative_gain
         best_split_value = mask_val
@@ -471,7 +481,9 @@ decision_tree_algorithm <- function(df,
                                     max_depth, is.child = "root"){
   data = df
   #Check whether stopping conditions have been violated
-  if(any(check_purity(data), nrow(data) < min_samples, (counter - 1) == max_depth)){
+  if(any(check_purity(data), 
+         nrow(data) < min_samples, 
+         (counter - 1) == max_depth)){
     classification = classify_data(data)
     return(print(paste(classification, is.child, counter)))
   } else {
@@ -487,8 +499,14 @@ decision_tree_algorithm <- function(df,
     data_below = data_g[[2]]
     print(paste(split_column, split_value, is.child, counter))
     #Find the answers
-    yes_answer = decision_tree_algorithm(df = data_below, counter = counter + 1, min_samples, max_depth, is.child = "yes <=")
-    no_answer = decision_tree_algorithm(df = data_above, counter = counter + 1, min_samples, max_depth, is.child = "no >")
+    yes_answer =
+      decision_tree_algorithm(df = data_below, 
+                              counter = counter + 1, 
+                              min_samples, max_depth, is.child = "yes <=")
+    no_answer =
+      decision_tree_algorithm(df = data_above, 
+                              counter = counter + 1, 
+                              min_samples, max_depth, is.child = "no >")
     
   }
   
@@ -516,7 +534,10 @@ This function calls the decision tree recursive algorithm, captures the output a
 decision_tree <- function(df, min_samples, max_depth){
   
   #Store decisions and reformat
-  decisions = capture.output(decision_tree_algorithm(df = df, min_samples = min_samples, max_depth = max_depth), append = F)
+  decisions =
+    capture.output(decision_tree_algorithm(df = df, 
+                                           min_samples = min_samples, 
+                                           max_depth = max_depth), append = F)
   decisions_df = strsplit(decisions, " ")
   decisions_cl = sapply(decisions_df, function(x) gsub("\"", "", x))
   

@@ -138,7 +138,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -226,41 +226,7 @@ window.Quarto = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#what-are-decision-trees" id="toc-what-are-decision-trees" class="nav-link active" data-scroll-target="#what-are-decision-trees">What are decision trees?</a>
-  <ul class="collapse">
-  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">Example</a></li>
-  </ul></li>
-  <li><a href="#describing-a-tree" id="toc-describing-a-tree" class="nav-link" data-scroll-target="#describing-a-tree">Describing a tree</a></li>
-  <li><a href="#measures-of-uncertainty" id="toc-measures-of-uncertainty" class="nav-link" data-scroll-target="#measures-of-uncertainty">Measures of uncertainty</a>
-  <ul class="collapse">
-  <li><a href="#entropy" id="toc-entropy" class="nav-link" data-scroll-target="#entropy">Entropy</a></li>
-  <li><a href="#gini-impurity" id="toc-gini-impurity" class="nav-link" data-scroll-target="#gini-impurity">Gini impurity</a></li>
-  <li><a href="#information-gain" id="toc-information-gain" class="nav-link" data-scroll-target="#information-gain">Information gain</a></li>
-  </ul></li>
-  <li><a href="#stopping-conditions" id="toc-stopping-conditions" class="nav-link" data-scroll-target="#stopping-conditions">Stopping conditions</a></li>
-  <li><a href="#helper-functions" id="toc-helper-functions" class="nav-link" data-scroll-target="#helper-functions">Helper functions</a>
-  <ul class="collapse">
-  <li><a href="#train-test-split" id="toc-train-test-split" class="nav-link" data-scroll-target="#train-test-split">Train-test split</a></li>
-  <li><a href="#checking-the-purity" id="toc-checking-the-purity" class="nav-link" data-scroll-target="#checking-the-purity">Checking the purity</a></li>
-  <li><a href="#classification" id="toc-classification" class="nav-link" data-scroll-target="#classification">Classification</a></li>
-  <li><a href="#splitting-the-data" id="toc-splitting-the-data" class="nav-link" data-scroll-target="#splitting-the-data">Splitting the data</a></li>
-  <li><a href="#potential-and-best-splits" id="toc-potential-and-best-splits" class="nav-link" data-scroll-target="#potential-and-best-splits">Potential and best splits</a></li>
-  </ul></li>
-  <li><a href="#the-main-algorithm" id="toc-the-main-algorithm" class="nav-link" data-scroll-target="#the-main-algorithm">The main algorithm</a>
-  <ul class="collapse">
-  <li><a href="#recursive-function" id="toc-recursive-function" class="nav-link" data-scroll-target="#recursive-function">Recursive function</a></li>
-  <li><a href="#organising-function" id="toc-organising-function" class="nav-link" data-scroll-target="#organising-function">Organising function</a></li>
-  </ul></li>
-  <li><a href="#remarks" id="toc-remarks" class="nav-link" data-scroll-target="#remarks">Remarks</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
-  </ul>
-</nav>
-    </div>
+    
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -570,10 +536,11 @@ node), split, n, loss, yval, (yprob)
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  p_data_below <span class="ot">=</span> <span class="fu">nrow</span>(data_below)<span class="sc">/</span>n</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  p_data_above <span class="ot">=</span> <span class="fu">nrow</span>(data_above)<span class="sc">/</span>n</span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Calculate overall entropy</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  overall_entropy <span class="ot">=</span> ((p_data_below<span class="sc">*</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(<span class="fu">pull</span>(data_below[, <span class="sc">-</span><span class="dv">1</span>])))) <span class="sc">+</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                       (p_data_above<span class="sc">*</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(<span class="fu">pull</span>(data_above[, <span class="sc">-</span><span class="dv">1</span>])))))</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(overall_entropy)</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  overall_entropy <span class="ot">=</span> </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    ((p_data_below<span class="sc">*</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(<span class="fu">pull</span>(data_below[, <span class="sc">-</span><span class="dv">1</span>])))) </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>     <span class="sc">+</span> (p_data_above<span class="sc">*</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(<span class="fu">pull</span>(data_above[, <span class="sc">-</span><span class="dv">1</span>])))))</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(overall_entropy)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>determine_best_split <span class="ot">&lt;-</span> <span class="cf">function</span>(data, potential_splits){</span>
@@ -586,19 +553,22 @@ node), split, n, loss, yval, (yprob)
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">unique</span>(potential_splits[, j])){</span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>      mask_val <span class="ot">=</span> i </span>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>      mask_col <span class="ot">=</span> j</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>      splits <span class="ot">=</span> <span class="fu">split_data</span>(<span class="at">data =</span> data, <span class="at">split_column =</span> mask_col, <span class="at">split_value =</span> mask_val)</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>      relative_entropy <span class="ot">=</span> <span class="fu">calculate_overall_entropy</span>(<span class="at">data_above =</span> splits[[<span class="dv">1</span>]], <span class="at">data_below =</span> splits[[<span class="dv">2</span>]])</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(relative_entropy <span class="sc">&lt;</span> running_entropy){</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        running_entropy <span class="ot">=</span> relative_entropy</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>        best_split_value <span class="ot">=</span> mask_val</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        best_split_column <span class="ot">=</span> <span class="fu">colnames</span>(potential_splits)[j]</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">next</span>(i)</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(best_split_column, best_split_value))</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>      splits <span class="ot">=</span> </span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">split_data</span>(<span class="at">data =</span> data, <span class="at">split_column =</span> mask_col, <span class="at">split_value =</span> mask_val)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>      relative_entropy <span class="ot">=</span> </span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">calculate_overall_entropy</span>(<span class="at">data_above =</span> splits[[<span class="dv">1</span>]], </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">data_below =</span> splits[[<span class="dv">2</span>]])</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(relative_entropy <span class="sc">&lt;</span> running_entropy){</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>        running_entropy <span class="ot">=</span> relative_entropy</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        best_split_value <span class="ot">=</span> mask_val</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>        best_split_column <span class="ot">=</span> <span class="fu">colnames</span>(potential_splits)[j]</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">next</span>(i)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(best_split_column, best_split_value))</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>determine_best_split <span class="ot">&lt;-</span> <span class="cf">function</span>(data, potential_splits, <span class="at">mode =</span> <span class="st">"gini"</span>){</span>
@@ -611,21 +581,24 @@ node), split, n, loss, yval, (yprob)
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">unique</span>(potential_splits[, j])){</span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>      mask_val <span class="ot">=</span> i </span>
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>      mask_col <span class="ot">=</span> j</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>      splits <span class="ot">=</span> <span class="fu">split_data</span>(<span class="at">data =</span> data, <span class="at">split_column =</span> mask_col, <span class="at">split_value =</span> mask_val)</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>      relative_gain <span class="ot">=</span> <span class="fu">get_information_gain</span>(<span class="at">parent =</span> data, <span class="at">r_child =</span> splits[[<span class="dv">1</span>]], <span class="at">l_child =</span> splits[[<span class="dv">2</span>]], <span class="at">mode =</span> mode)</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(relative_gain <span class="sc">&gt;</span> running_gain){</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        running_gain <span class="ot">=</span> relative_gain</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        best_split_value <span class="ot">=</span> mask_val</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        best_split_column <span class="ot">=</span> <span class="fu">colnames</span>(potential_splits)[j]</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">next</span>(i)</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(best_split_column, best_split_value))</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">#might need to come back in future and add as.character() to gini as well</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>      splits <span class="ot">=</span> </span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">split_data</span>(<span class="at">data =</span> data, <span class="at">split_column =</span> mask_col, <span class="at">split_value =</span> mask_val)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>      relative_gain <span class="ot">=</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">get_information_gain</span>(<span class="at">parent =</span> data, <span class="at">r_child =</span> splits[[<span class="dv">1</span>]], </span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>                             <span class="at">l_child =</span> splits[[<span class="dv">2</span>]], <span class="at">mode =</span> mode)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(relative_gain <span class="sc">&gt;</span> running_gain){</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        running_gain <span class="ot">=</span> relative_gain</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>        best_split_value <span class="ot">=</span> mask_val</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>        best_split_column <span class="ot">=</span> <span class="fu">colnames</span>(potential_splits)[j]</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">next</span>(i)</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(best_split_column, best_split_value))</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="co">#might need to come back in future and add as.character() to gini as well</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -641,28 +614,36 @@ node), split, n, loss, yval, (yprob)
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                                    max_depth, <span class="at">is.child =</span> <span class="st">"root"</span>){</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">=</span> df</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Check whether stopping conditions have been violated</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">any</span>(<span class="fu">check_purity</span>(data), <span class="fu">nrow</span>(data) <span class="sc">&lt;</span> min_samples, (counter <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">==</span> max_depth)){</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    classification <span class="ot">=</span> <span class="fu">classify_data</span>(data)</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">print</span>(<span class="fu">paste</span>(classification, is.child, counter)))</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>   <span class="co">#Recursive part</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Helper functions</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    potential_splits <span class="ot">=</span> <span class="fu">get_potential_splits</span>(data)</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    split_g <span class="ot">=</span> <span class="fu">determine_best_split</span>(data, potential_splits)</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    split_column <span class="ot">=</span> split_g[[<span class="dv">1</span>]]</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    split_value <span class="ot">=</span> split_g[[<span class="dv">2</span>]]</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    data_g <span class="ot">=</span> <span class="fu">split_data</span>(data, split_column, split_value)</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    data_above <span class="ot">=</span> data_g[[<span class="dv">1</span>]]</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    data_below <span class="ot">=</span> data_g[[<span class="dv">2</span>]]</span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste</span>(split_column, split_value, is.child, counter))</span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Find the answers</span></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    yes_answer <span class="ot">=</span> <span class="fu">decision_tree_algorithm</span>(<span class="at">df =</span> data_below, <span class="at">counter =</span> counter <span class="sc">+</span> <span class="dv">1</span>, min_samples, max_depth, <span class="at">is.child =</span> <span class="st">"yes &lt;="</span>)</span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    no_answer <span class="ot">=</span> <span class="fu">decision_tree_algorithm</span>(<span class="at">df =</span> data_above, <span class="at">counter =</span> counter <span class="sc">+</span> <span class="dv">1</span>, min_samples, max_depth, <span class="at">is.child =</span> <span class="st">"no &gt;"</span>)</span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">any</span>(<span class="fu">check_purity</span>(data), </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>         <span class="fu">nrow</span>(data) <span class="sc">&lt;</span> min_samples, </span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>         (counter <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">==</span> max_depth)){</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    classification <span class="ot">=</span> <span class="fu">classify_data</span>(data)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">print</span>(<span class="fu">paste</span>(classification, is.child, counter)))</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>   <span class="co">#Recursive part</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Helper functions</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    potential_splits <span class="ot">=</span> <span class="fu">get_potential_splits</span>(data)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    split_g <span class="ot">=</span> <span class="fu">determine_best_split</span>(data, potential_splits)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    split_column <span class="ot">=</span> split_g[[<span class="dv">1</span>]]</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    split_value <span class="ot">=</span> split_g[[<span class="dv">2</span>]]</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    data_g <span class="ot">=</span> <span class="fu">split_data</span>(data, split_column, split_value)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    data_above <span class="ot">=</span> data_g[[<span class="dv">1</span>]]</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    data_below <span class="ot">=</span> data_g[[<span class="dv">2</span>]]</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste</span>(split_column, split_value, is.child, counter))</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Find the answers</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    yes_answer <span class="ot">=</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">decision_tree_algorithm</span>(<span class="at">df =</span> data_below, </span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>                              <span class="at">counter =</span> counter <span class="sc">+</span> <span class="dv">1</span>, </span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>                              min_samples, max_depth, <span class="at">is.child =</span> <span class="st">"yes &lt;="</span>)</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>    no_answer <span class="ot">=</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">decision_tree_algorithm</span>(<span class="at">df =</span> data_above, </span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>                              <span class="at">counter =</span> counter <span class="sc">+</span> <span class="dv">1</span>, </span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>                              min_samples, max_depth, <span class="at">is.child =</span> <span class="st">"no &gt;"</span>)</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>So the main algorithm yields the following output on the salmon-fish data…</p>
 <div class="cell">
@@ -686,31 +667,34 @@ node), split, n, loss, yval, (yprob)
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>decision_tree <span class="ot">&lt;-</span> <span class="cf">function</span>(df, min_samples, max_depth){</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Store decisions and reformat</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  decisions <span class="ot">=</span> <span class="fu">capture.output</span>(<span class="fu">decision_tree_algorithm</span>(<span class="at">df =</span> df, <span class="at">min_samples =</span> min_samples, <span class="at">max_depth =</span> max_depth), <span class="at">append =</span> F)</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  decisions_df <span class="ot">=</span> <span class="fu">strsplit</span>(decisions, <span class="st">" "</span>)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  decisions_cl <span class="ot">=</span> <span class="fu">sapply</span>(decisions_df, <span class="cf">function</span>(x) <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\"</span><span class="st">"</span>, <span class="st">""</span>, x))</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Make list of equal length</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(decisions_cl)){</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(decisions_cl[[i]]) <span class="sc">!=</span> <span class="dv">6</span>){</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i <span class="sc">==</span> <span class="dv">1</span>){</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>      decisions_cl[[i]] <span class="ot">=</span> <span class="fu">append</span>(decisions_cl[[i]], <span class="cn">NA</span>, <span class="at">after =</span> <span class="dv">4</span>)</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>      decisions_cl[[i]] <span class="ot">=</span> <span class="fu">append</span>(decisions_cl[[i]], <span class="cn">NA</span>, <span class="at">after =</span> <span class="dv">2</span>)</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    }} <span class="cf">else</span> { <span class="cf">next</span>(i) }}</span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Convert to df and reformat again</span></span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>  decisions_df <span class="ot">=</span> <span class="fu">as.data.frame</span>(decisions_cl)</span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>  decisions_t <span class="ot">=</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(decisions_df))</span>
-<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>  decisions_x <span class="ot">=</span> decisions_t[, <span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row.names</span>(decisions_x) <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(decisions_x)</span>
-<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(decisions_x) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"node"</span>, <span class="st">"split.val"</span>, <span class="st">"is.child"</span>, <span class="st">"split"</span>, <span class="st">"depth"</span>)</span>
-<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Sort the df</span></span>
-<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>  decisions_x <span class="ot">=</span> decisions_x[<span class="fu">order</span>(decisions_x<span class="sc">$</span>depth), ]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  decisions <span class="ot">=</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">capture.output</span>(<span class="fu">decision_tree_algorithm</span>(<span class="at">df =</span> df, </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">min_samples =</span> min_samples, </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">max_depth =</span> max_depth), <span class="at">append =</span> F)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  decisions_df <span class="ot">=</span> <span class="fu">strsplit</span>(decisions, <span class="st">" "</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  decisions_cl <span class="ot">=</span> <span class="fu">sapply</span>(decisions_df, <span class="cf">function</span>(x) <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\"</span><span class="st">"</span>, <span class="st">""</span>, x))</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Make list of equal length</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(decisions_cl)){</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(decisions_cl[[i]]) <span class="sc">!=</span> <span class="dv">6</span>){</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>      decisions_cl[[i]] <span class="ot">=</span> <span class="fu">append</span>(decisions_cl[[i]], <span class="cn">NA</span>, <span class="at">after =</span> <span class="dv">4</span>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>      decisions_cl[[i]] <span class="ot">=</span> <span class="fu">append</span>(decisions_cl[[i]], <span class="cn">NA</span>, <span class="at">after =</span> <span class="dv">2</span>)</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    }} <span class="cf">else</span> { <span class="cf">next</span>(i) }}</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Convert to df and reformat again</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>  decisions_df <span class="ot">=</span> <span class="fu">as.data.frame</span>(decisions_cl)</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>  decisions_t <span class="ot">=</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(decisions_df))</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>  decisions_x <span class="ot">=</span> decisions_t[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row.names</span>(decisions_x) <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(decisions_x)</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(decisions_x) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"node"</span>, <span class="st">"split.val"</span>, <span class="st">"is.child"</span>, <span class="st">"split"</span>, <span class="st">"depth"</span>)</span>
 <span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(decisions_x)</span>
-<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Sort the df</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>  decisions_x <span class="ot">=</span> decisions_x[<span class="fu">order</span>(decisions_x<span class="sc">$</span>depth), ]</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(decisions_x)</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The organising function returns output that looks like this</p>
 <div class="cell">
