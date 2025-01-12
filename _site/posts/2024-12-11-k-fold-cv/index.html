@@ -140,12 +140,13 @@ window.Quarto = {
 };
 </script>
 
+<link rel="stylesheet" href="../posts_styling.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -190,53 +191,70 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">K-fold cross validation from scratch</h1>
-                  <div>
-        <div class="description">
-          A from scratch implementation of k-fold cross validation in R and some examples
-        </div>
-      </div>
-                          <div class="quarto-categories">
-                <div class="quarto-category">datascience</div>
-                <div class="quarto-category">R</div>
-                <div class="quarto-category">classicalml</div>
-              </div>
-                  </div>
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-is-model-validation" id="toc-what-is-model-validation" class="nav-link active" data-scroll-target="#what-is-model-validation">What is model validation?</a></li>
+  <li><a href="#different-types-of-model-validation" id="toc-different-types-of-model-validation" class="nav-link" data-scroll-target="#different-types-of-model-validation">Different types of model validation</a>
+  <ul class="collapse">
+  <li><a href="#train-test-split" id="toc-train-test-split" class="nav-link" data-scroll-target="#train-test-split">Train-test split</a></li>
+  <li><a href="#k-fold-cross-validation" id="toc-k-fold-cross-validation" class="nav-link" data-scroll-target="#k-fold-cross-validation">K-fold cross validation</a></li>
+  </ul></li>
+  <li><a href="#the-algorithm" id="toc-the-algorithm" class="nav-link" data-scroll-target="#the-algorithm">The algorithm</a></li>
+  <li><a href="#choice-of-k-repeated-cv-and-loocv" id="toc-choice-of-k-repeated-cv-and-loocv" class="nav-link" data-scroll-target="#choice-of-k-repeated-cv-and-loocv">Choice of <span class="math inline">\(k\)</span>, repeated CV and LOOCV</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">K-fold cross validation from scratch</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">datascience</div>
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">classicalml</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A from scratch implementation of k-fold cross validation in R and some examples
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Rashmin Chitale </p>
+          </div>
   </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 1, 2023</p>
+    </div>
+  </div>
   
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Rashmin Chitale </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">March 1, 2023</p>
-      </div>
-    </div>
     
-      
-    </div>
-    
+  </div>
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
-<!-- sidebar -->
-<!-- margin-sidebar -->
-    
-<!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
-
+</header>
 
 
 <section id="what-is-model-validation" class="level1">

@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2022-10-24">
 <meta name="description" content="A from scratch implementation of the k-nearest-neighbors algorithm in R">
 
-<title>k-NN from scratch – Rashmin Chitale</title>
+<title>K-nn from scratch – Rashmin Chitale</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -136,12 +136,13 @@ window.Quarto = {
 };
 </script>
 
+<link rel="stylesheet" href="../posts_styling.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -186,52 +187,88 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">k-NN from scratch</h1>
-                  <div>
-        <div class="description">
-          A from scratch implementation of the k-nearest-neighbors algorithm in R
-        </div>
-      </div>
-                          <div class="quarto-categories">
-                <div class="quarto-category">datascience</div>
-                <div class="quarto-category">R</div>
-              </div>
-                  </div>
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#visual-example" id="toc-visual-example" class="nav-link" data-scroll-target="#visual-example">Visual example</a></li>
+  <li><a href="#an-interesting-case" id="toc-an-interesting-case" class="nav-link" data-scroll-target="#an-interesting-case">An interesting case</a></li>
+  </ul></li>
+  <li><a href="#distance-metrics" id="toc-distance-metrics" class="nav-link" data-scroll-target="#distance-metrics">Distance metrics</a>
+  <ul class="collapse">
+  <li><a href="#euclidean-distance" id="toc-euclidean-distance" class="nav-link" data-scroll-target="#euclidean-distance">Euclidean distance</a></li>
+  <li><a href="#cosine-distance" id="toc-cosine-distance" class="nav-link" data-scroll-target="#cosine-distance">Cosine distance</a></li>
+  </ul></li>
+  <li><a href="#data-format" id="toc-data-format" class="nav-link" data-scroll-target="#data-format">Data format</a></li>
+  <li><a href="#the-majority-vote-helper" id="toc-the-majority-vote-helper" class="nav-link" data-scroll-target="#the-majority-vote-helper">The majority vote helper</a></li>
+  <li><a href="#main-algorithms" id="toc-main-algorithms" class="nav-link" data-scroll-target="#main-algorithms">Main algorithms</a>
+  <ul class="collapse">
+  <li><a href="#classification" id="toc-classification" class="nav-link" data-scroll-target="#classification">Classification</a></li>
+  <li><a href="#regression" id="toc-regression" class="nav-link" data-scroll-target="#regression">Regression</a></li>
+  </ul></li>
+  <li><a href="#evaluating-model-performance" id="toc-evaluating-model-performance" class="nav-link" data-scroll-target="#evaluating-model-performance">Evaluating model performance</a>
+  <ul class="collapse">
+  <li><a href="#classification-performance" id="toc-classification-performance" class="nav-link" data-scroll-target="#classification-performance">Classification performance</a>
+  <ul class="collapse">
+  <li><a href="#model-validation" id="toc-model-validation" class="nav-link" data-scroll-target="#model-validation">Model validation</a></li>
+  <li><a href="#reason-for-good-performance" id="toc-reason-for-good-performance" class="nav-link" data-scroll-target="#reason-for-good-performance">Reason for good performance</a></li>
+  </ul></li>
+  <li><a href="#regression-performance" id="toc-regression-performance" class="nav-link" data-scroll-target="#regression-performance">Regression performance</a></li>
+  </ul></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources">Sources</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">K-nn from scratch</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">datascience</div>
+    <div class="quarto-category">R</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A from scratch implementation of the k-nearest-neighbors algorithm in R
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Rashmin Chitale </p>
+          </div>
   </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 24, 2022</p>
+    </div>
+  </div>
   
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Rashmin Chitale </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">October 24, 2022</p>
-      </div>
-    </div>
     
-      
-    </div>
-    
+  </div>
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
-<!-- sidebar -->
-<!-- margin-sidebar -->
-    
-<!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
-
+</header>
 
 
 <section id="introduction" class="level1">

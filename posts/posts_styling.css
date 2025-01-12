@@ -1,0 +1,26 @@
+/* special font for titles of blog posts */
+
+@import 'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap';
+
+
+.title {
+  font-family: "Great Vibes", serif;
+  font-size: 63px; /* Adjust size as needed */
+  font-style: normal; /* Ensure no bolding interferes */
+}
+
+h1 {
+  font-family: "Consolas", sans-serif;
+  font-size: 35px;
+}
+
+h2 {
+  font-family: "Consolas", sans-serif;
+  font-size: 30px;
+}
+
+h3 {
+  font-family: "Consolas", sans-serif;
+  font-size: 25px;
+}
+

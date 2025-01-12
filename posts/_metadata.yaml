@@ -4,15 +4,18 @@
 freeze: auto
 
 # enable banner style title blocks on listings page ----
-title-block-banner: true
+title-block-banner: false
 
 # enable table of content for all posts ----
-toc: false
+toc: true
+toc-location: left
 
 # change margins for all posts ----
-grid:
-  body-width: 584px
-
-# code block font and scale ----
-monofont: "Atkinson Hyperlegible"
+format:
+  html:
+    css: posts_styling.css
+    grid:
+      sidebar-width: 600px
+      margin-width: 600px
+      gutter-width: 1.5rem
   

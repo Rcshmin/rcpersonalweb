@@ -1,5 +1,5 @@
 ---
-title: "k-NN from scratch"
+title: "K-nn from scratch"
 description: "A from scratch implementation of the k-nearest-neighbors algorithm in R"
 author:
   - name: Rashmin Chitale

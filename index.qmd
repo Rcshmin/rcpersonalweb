@@ -8,15 +8,14 @@ about:
       text: rashmin.chitale@gmail.com
 ---
 
-
-Hello and welcome to my personal website, your one stop shop for viewing my self-indulgent display of personal projects. As of now, I am a fourth year student studying a Bachelor of Actuarial Studies with a Bachelor of Applied Finance. Boring, right? Some of my interests include mathematics, data science and cricket (yes, the sport🏏). On this website, you will find some projects and other code related endeavors I have worked on in my downtime. Most of them are a from scratch implementation of a data science algorithm in R. Take a look if you are interested.
+Hello and welcome to my personal website, your one stop shop for viewing my self-indulgent display of personal projects. I am a recent university graduate who studied actuarial studies. Some of my interests include mathematics, data science and cricket (the sport🏏). On this website, you will find some projects and other code related endeavors I have worked on in my downtime. Most of them are a from scratch implementation of a data science algorithm in R. Take a look if you are interested.
 
 ## Education
 
-Macquarie University | Bachelor of Actuarial Studies with Bachelor of Applied Finance | 2021 - 2024
+Macquarie University \| Bachelor of Actuarial Studies with Bachelor of Applied Finance \| 2021 - 2024
 
-Ryde Secondary College | Higher School Certificate | 2015 - 2020
+Ryde Secondary College \| Higher School Certificate \| 2015 - 2020
 
 ## Experience
 
-Australian Bureau of Statistics | Analyst | January 2022 - Present
+Australian Bureau of Statistics \| Analyst \| January 2022 - Present

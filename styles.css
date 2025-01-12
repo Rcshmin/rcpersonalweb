@@ -1,5 +1,7 @@
 /*-- scss:defaults --*/
 
+/* change the font to be used for the whole website */
+
 @import 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap';
 
 $font-family: "Atkinson Hyperlegible", sans-serif;
@@ -7,6 +9,15 @@ $font-family-serif: "Atkinson Hyperlegible", sans-serif;
 
 /*-- scss:rules --*/
 
+/* position of the display image on the postings */
+
 .quarto-grid-item p.card-img-middle > img {
   object-position: middle
+}
+
+/* code block font size */
+
+code.sourceCode {
+  font-size: 0.83em;
+  /* or try font-size: xx-large; */
 }
