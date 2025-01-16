@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Rashmin Chitale">
+<meta name="dcterms.date" content="2023-01-19">
+<meta name="description" content="Fixing my previous attempt using the OOP framework">
+
+<title>Decision tree classifier from scratch v2 – Rashmin Chitale</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../posts_styling.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../images/logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Rashmin Chitale</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">About <img src="../..\images/aboutlogo.png" style="height:1em"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Posts <img src="../..\images/postslogo.png" style="height:1em"></span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Rcshmin"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://au.linkedin.com/in/rashmin-chitale-0aa989173"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#preface" id="toc-preface" class="nav-link active" data-scroll-target="#preface">Preface</a></li>
+  <li><a href="#class-structure" id="toc-class-structure" class="nav-link" data-scroll-target="#class-structure">Class structure</a></li>
+  <li><a href="#revised-and-new-helper-functions" id="toc-revised-and-new-helper-functions" class="nav-link" data-scroll-target="#revised-and-new-helper-functions">Revised and new helper functions</a></li>
+  <li><a href="#full-oop-code" id="toc-full-oop-code" class="nav-link" data-scroll-target="#full-oop-code">Full OOP code</a></li>
+  <li><a href="#testing" id="toc-testing" class="nav-link" data-scroll-target="#testing">Testing</a>
+  <ul class="collapse">
+  <li><a href="#salmon-tuna-dataset" id="toc-salmon-tuna-dataset" class="nav-link" data-scroll-target="#salmon-tuna-dataset">Salmon-tuna dataset</a></li>
+  <li><a href="#iris-dataset" id="toc-iris-dataset" class="nav-link" data-scroll-target="#iris-dataset">Iris dataset</a></li>
+  <li><a href="#single-variable-example" id="toc-single-variable-example" class="nav-link" data-scroll-target="#single-variable-example">Single variable example</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Decision tree classifier from scratch v2</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">datascience</div>
+    <div class="quarto-category">classicalml</div>
+    <div class="quarto-category">R</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Fixing my previous attempt using the OOP framework
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Rashmin Chitale </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 19, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="preface" class="level1">
+<h1>Preface</h1>
+<p>This was my second attempt at creating a decision tree classifier. When I last attempted the problem of creating a decision tree classifier from scratch, my final solution was very incomplete. I was able to create a so called “recursive main function”, that would print all the nodes and store them in a data frame. However, I was unable to convert these splits into a tree like format, paralleling that of those found in the <code>rpart</code> and <code>tree</code> libraries. My solution was also unable to make a prediction on a new data point, rather, it stopped at learning on the tree. So in essence, what I had made, was not even complete in the slightest sense. A model that cannot be tested on new unseen data, is essentially an useless model in the realm of machine learning.</p>
+<p>There were a few key reasons why I was unable to get to a good working solution. Firstly, there were a lot of variables and information that had to be kept tracked of. As the main recursive function generates the nodes, it was hard to store them in a tidy way, that could later be used to print the tree, and even have another function descend down it to get a new prediction. This stemmed in part from my poor understanding of how recursion worked on binary trees at the time. More so, my functional programming skills had hit a roadblock for this problem. I was also unsure whether the main recursive splitting function was working as it should, largely due to the inability to view the output of the function in a meaningful “tree-like” way. Looking back, all of these problems stemmed from one global issue — not having an adequate data structure. I was trying to create a decision tree using a data frame representation, when in actuality the best way to represent a tree, is just a tree.</p>
+<p><strong>Object Oriented Programming (OOP)</strong> turned out to be the best solution to this problem.</p>
+<blockquote class="blockquote">
+<p>Object-oriented programming (OOP) is a programming paradigm based on the concept of “objects”, which can contain data and code. The data is in the form of fields (often known as attributes or properties), and the code is in the form of procedures (often known as methods). A common feature of objects is that procedures (or methods) are attached to them and can access and modify the object’s data fields. In this brand of OOP, there is usually a special name such as this or self used to refer to the current object. In OOP, computer programs are designed by making them out of objects that interact with one another</p>
+</blockquote>
+<p>In laymans terms OOP differs from procedural programming, in that it places more emphasis on the structure of the data</p>
+<blockquote class="blockquote">
+<p>Most OOP lanuages define a class. A class is an abstract blueprint that creates more specific, concrete objects. Classes often represent broad categories, like Car or Dog that share attributes. These classes define what attributes an instance of this type will have, like color, but not the value of those attributes for a specific object. Classes can also contain functions called methods that are available only to objects of that type. These functions are defined within the class and perform some action helpful to that specific object type</p>
+</blockquote>
+<p>Once again what this means is that we can create a blueprint for a data type, and then call specific functions on that data. These function can access and modify the attributes of this new data type (most of the time!). I have shown a simple example of this below for “rectangles”. Rectangles is a not a data type that is default implemented in most languages like vectors or lists. But it is easy to define a rectangle geometrically, so let us make a special data type for rectangles (a class). We will then create a special function to act on this new data type; it will get the area.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Rectangles <span class="ot">=</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setRefClass</span>(<span class="at">Class =</span> <span class="st">"rectangles"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">fields =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="st">"numeric"</span>, <span class="at">y =</span> <span class="st">"numeric"</span>), </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">methods =</span> </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                <span class="fu">list</span>(<span class="at">get_area =</span> </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                       <span class="cf">function</span>(){</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">return</span>(.self<span class="sc">$</span>x<span class="sc">*</span>.self<span class="sc">$</span>y)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                           },</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">get_squared_area =</span> </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                       <span class="cf">function</span>(){</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                             r_area <span class="ot">=</span> .self<span class="sc">$</span><span class="fu">get_area</span>()</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">return</span>(.self<span class="sc">$</span>r_area<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                           },</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                     <span class="at">get_cubed_area =</span> </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                       <span class="cf">function</span>(){</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                             r_area <span class="ot">=</span> .self<span class="sc">$</span><span class="fu">get_area</span>()</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">return</span>(r_area<span class="sc">^</span><span class="dv">3</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                           }</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                         ))</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>r1 <span class="ot">=</span> <span class="fu">Rectangles</span>(<span class="at">x =</span> <span class="dv">5</span>, <span class="at">y =</span> <span class="dv">4</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>r1<span class="sc">$</span><span class="fu">get_area</span>()</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 20</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>r1<span class="sc">$</span><span class="fu">get_cubed_area</span>()</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>So OOP is all about grouping related functions and variables together. Rather than having the functions and variables be made in isolation, which is what procedural programming focuses on, lets make them together. This was the technique which I needed to finish the problem of creating a decision tree classifier from scratch. Lastly there are a few more things I want to note about OOP. Programmers and computer science courses will often reference the “four pillars” behind OOP. Here is what they are.</p>
+<ul>
+<li><strong>Inheritance</strong>: Child classes inherit data and behaviors from the parent class</li>
+<li><strong>Encapsulation</strong>: Containing information in an object, exposing only selected information</li>
+<li><strong>Abstraction</strong>: Only exposing high-level public methods for accessing an object</li>
+<li><strong>Polymorphism</strong>: Many methods can do the same task</li>
+</ul>
+<p>R has several different ways of doing OOP, each using the four pillars to a different degree. These OOP systems are called S3, S4 and R6 (extension to RC). There are different trade off between using different systems. For those interested you may take a look at <strong><em>Hadley Wickham’s Advanced R Book</em></strong> (it is a free bookdown). I will be using the R6 system, as it is the easiest, and most similar to other modern systems in data science geared languages.</p>
+</section>
+<section id="class-structure" class="level1">
+<h1>Class structure</h1>
+<p>I created two classes in my OOP implementation of the decision tree classifier. One for the node and and one for the tree. The node is basic structure defining the main elements of node. That being its parent its childs, and the information the node contains (is it a decision or a split). Only the initialize method is defined for this class, it sets the default values to a node to null. The tree class contains all the helper functions as methods for creating the tree. It also contains the stopping conditions, the information metric to use, and the training data frame to use in its attributes. The root attribute, is where the fully grown tree is later stored to be used (saves computation time). Note that these two structures are not sub-classes or anything like that; the node class is merely used in one of the methods for the tree. Finally, the initialize method for the tree only assigns the root as NULL, with the rest being assigned their inputted values.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/classdiagram.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:65.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="revised-and-new-helper-functions" class="level1">
+<h1>Revised and new helper functions</h1>
+<p>Note that all of my functions have had small changes made to them. This small change is that I used the <code>$self</code> semantic of the R6 system for accessing and modifying attributes, as well as other methods. I will now discuss any major changes that I have made to my helper functions, and any new ones I created</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>get_information_gain <span class="ot">=</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(parent, l_child, r_child, <span class="at">mode =</span> self<span class="sc">$</span>mode){</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Get weights in each child</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    weight_l <span class="ot">=</span> <span class="fu">nrow</span>(l_child)<span class="sc">/</span><span class="fu">nrow</span>(parent)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    weight_r <span class="ot">=</span> <span class="fu">nrow</span>(r_child)<span class="sc">/</span><span class="fu">nrow</span>(parent)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Choose mode</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(mode <span class="sc">==</span> <span class="st">"gini"</span>){</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    gain <span class="ot">=</span> self<span class="sc">$</span><span class="fu">get_gini_impurity</span>(parent[, <span class="fu">ncol</span>(parent)]) <span class="sc">-</span> (weight_l<span class="sc">*</span>self<span class="sc">$</span><span class="fu">get_gini_impurity</span>(l_child[, <span class="fu">ncol</span>(l_child)]) <span class="sc">+</span> weight_r<span class="sc">*</span>self<span class="sc">$</span><span class="fu">get_gini_impurity</span>(r_child[, <span class="fu">ncol</span>(r_child)]))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    gain <span class="ot">=</span> self<span class="sc">$</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(parent[, <span class="fu">ncol</span>(parent)])) <span class="sc">-</span> (weight_l<span class="sc">*</span>self<span class="sc">$</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(l_child[, <span class="fu">ncol</span>(l_child)])) <span class="sc">+</span> weight_r<span class="sc">*</span>self<span class="sc">$</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(r_child[, <span class="fu">ncol</span>(r_child)])))</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Previously, I only used entropy as my metric for finding the best split. I then calculated the weighted entropy, and found the split that had the lowest weighted entropy. I have since converted my functions to use information gain, with an option to choose either entropy or gini-impurity. Now the best split is the one that maximizes information gain. This change is reflected in my helper which finds the best split.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>build_tree <span class="ot">=</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(<span class="at">df =</span> self<span class="sc">$</span>df, <span class="at">curr_depth =</span> <span class="dv">0</span>){</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">=</span> df</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Split until stopping condition are met</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">any</span>(self<span class="sc">$</span><span class="fu">check_purity</span>(data), </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>          <span class="fu">nrow</span>(data) <span class="sc">&lt;</span> self<span class="sc">$</span>min_samples, </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>          curr_depth <span class="sc">==</span> self<span class="sc">$</span>max_depth)){</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Keep splitting</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Get potential and best splits</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    potential_splits <span class="ot">=</span> self<span class="sc">$</span><span class="fu">get_potential_splits</span>(data)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    best_split <span class="ot">=</span> self<span class="sc">$</span><span class="fu">determine_best_split</span>(data, potential_splits, <span class="at">mode =</span> self<span class="sc">$</span>mode)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Record best split value and feature</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    split_column <span class="ot">=</span> best_split[[<span class="dv">1</span>]]</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    split_value <span class="ot">=</span> best_split[[<span class="dv">2</span>]]</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Split by best combo and assign</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    data_split <span class="ot">=</span> self<span class="sc">$</span><span class="fu">split_data</span>(data, split_column, split_value)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    data_above <span class="ot">=</span> data_split[[<span class="dv">1</span>]]</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    data_below <span class="ot">=</span> data_split[[<span class="dv">2</span>]]</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Recursion occurs here</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    left_subtree <span class="ot">=</span> self<span class="sc">$</span><span class="fu">build_tree</span>(<span class="at">df =</span> data_below, <span class="at">curr_depth =</span> curr_depth <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    right_subtree <span class="ot">=</span> self<span class="sc">$</span><span class="fu">build_tree</span>(<span class="at">df =</span> data_above, <span class="at">curr_depth =</span> curr_depth <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Return decision node</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">depth =</span> curr_depth, <span class="at">left =</span> left_subtree, <span class="at">right =</span> right_subtree, <span class="at">feature =</span> split_column, <span class="at">value =</span> split_value))</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>          } <span class="cf">else</span> {</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Stop splitting</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Compute leaf node</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    leaf.value <span class="ot">=</span> self<span class="sc">$</span><span class="fu">classify_data</span>(data)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> leaf.value, <span class="at">depth =</span> curr_depth))</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This is by far the biggest change to my helpers from the v1 classifier. The idea behind the build tree is similar to what it was previously. In fact most of the code is the same. All that has changed is that when I call the function for recursion, I also create a new node using the new node class. This essentially just stores the nodes as the splits are being created, or when a stopping condition is met.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>print_tree <span class="ot">=</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(<span class="at">tree =</span> self<span class="sc">$</span><span class="fu">build_tree</span>(self<span class="sc">$</span>df)){</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Print decision node</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(tree<span class="sc">$</span>feature)){</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(tree<span class="sc">$</span>depth, <span class="fu">paste0</span>(<span class="fu">paste</span>(<span class="fu">rep</span>(<span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, tree<span class="sc">$</span>depth), <span class="at">collapse =</span> <span class="st">""</span>), tree<span class="sc">$</span>depth), tree<span class="sc">$</span>feature, <span class="st">"&lt;="</span>, tree<span class="sc">$</span>value, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)}</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Check for nullity of left and right; leaf</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">any</span>(<span class="fu">is.null</span>(tree<span class="sc">$</span>left), <span class="fu">is.null</span>(tree<span class="sc">$</span>right))){</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      self<span class="sc">$</span><span class="fu">print_tree</span>(<span class="at">tree =</span> tree<span class="sc">$</span>left)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      self<span class="sc">$</span><span class="fu">print_tree</span>(<span class="at">tree =</span> tree<span class="sc">$</span>right)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="fu">paste0</span>(tree<span class="sc">$</span>depth, <span class="fu">paste</span>(<span class="fu">rep</span>(<span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, tree<span class="sc">$</span>depth), <span class="at">collapse =</span> <span class="st">""</span>), tree<span class="sc">$</span>depth), <span class="st">"predict:"</span>, tree<span class="sc">$</span>value, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The build tree functions creates the tree. It is stored in a data type called an environment in R. The print tree function descends down this environment recursively, and prints the important attributes needed for creating a visualization of the tree. The stopping conditions for my tree were if a node had no children. It was also important to print each part of the tree on a new line, and for nodes at the same depth to have the same indent. This makes following the tree visually quite easy to follow (although I must say my printing function is by no means the best).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">=</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(){</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Build the tree once for predictions only</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>root <span class="ot">=</span> self<span class="sc">$</span><span class="fu">build_tree</span>()</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This method just builds the tree and stores it in an attribute of the tree class called root. Nothing special here. Storing the tree saves computation time later, when we have to make predictions on the testing data set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>make_prediction <span class="ot">=</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(y, <span class="at">tree =</span> self<span class="sc">$</span>root){</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">class</span>(tree<span class="sc">$</span>value) <span class="sc">==</span> <span class="st">"character"</span>) <span class="fu">return</span>(tree<span class="sc">$</span>value)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      partition.val <span class="ot">=</span> tree<span class="sc">$</span>value</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      feature.num <span class="ot">=</span> <span class="fu">which</span>(<span class="fu">names</span>(self<span class="sc">$</span>df) <span class="sc">==</span> tree<span class="sc">$</span>feature)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(y[[feature.num]] <span class="sc">&lt;</span> partition.val){</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>       self<span class="sc">$</span><span class="fu">make_prediction</span>(<span class="at">y =</span> y, <span class="at">tree =</span> tree<span class="sc">$</span>left) </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        self<span class="sc">$</span><span class="fu">make_prediction</span>(<span class="at">y =</span> y, <span class="at">tree =</span> tree<span class="sc">$</span>right)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The make prediction method takes a single row or observation and returns the predicted class. It works by descending down the tree we have build and stored recursively. It does this by looking converting each decision node into an if statement, and comparing the corresponding element of the new observation. The stopping condition here is if the value attribute is a character. In my class diagrams I should the value attribute could be numeric or character. The numeric case is for when the node is a decision node, and the character case is for when the node is a leaf node.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>get_predictions <span class="ot">=</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(Y){</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    predict.dt <span class="ot">=</span> <span class="fu">double</span>(<span class="at">length =</span> <span class="fu">nrow</span>(Y))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(Y)){</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>      row.val <span class="ot">=</span> <span class="fu">as.numeric</span>(Y[i, <span class="dv">1</span><span class="sc">:</span>(<span class="fu">ncol</span>(Y)<span class="sc">-</span><span class="dv">1</span>)])</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>      predict.dt[i] <span class="ot">=</span> self<span class="sc">$</span><span class="fu">make_prediction</span>(<span class="at">y =</span> row.val)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="cf">next</span>(i)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(predict.dt)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The final get prediction method takes a testing data frame and makes a prediction on each sample by calling the make prediction method for a single sample. It then returns these predictions</p>
+</section>
+<section id="full-oop-code" class="level1">
+<h1>Full OOP code</h1>
+<p>Here is the full code for the decision tree classifier</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Node <span class="ot">=</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">R6Class</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">classname =</span> <span class="st">"Node"</span>, </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">public =</span> <span class="fu">list</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">depth =</span> <span class="st">"numeric"</span>, </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">left =</span> <span class="cn">NULL</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">right =</span> <span class="cn">NULL</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">feature =</span> <span class="cn">NULL</span>, </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">value =</span> <span class="cn">NULL</span>, </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">initialize =</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(<span class="at">depth =</span> <span class="cn">NULL</span>, <span class="at">left =</span> <span class="cn">NULL</span>, <span class="at">right =</span> <span class="cn">NULL</span>, <span class="at">feature =</span> <span class="cn">NULL</span>, <span class="at">value =</span> <span class="cn">NULL</span>){</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>          self<span class="sc">$</span>depth <span class="ot">=</span> depth</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>          self<span class="sc">$</span>left <span class="ot">=</span> left</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>          self<span class="sc">$</span>right <span class="ot">=</span> right</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>          self<span class="sc">$</span>feature <span class="ot">=</span> feature</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>          self<span class="sc">$</span>value <span class="ot">=</span> value</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>Tree <span class="ot">=</span> </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">R6Class</span>(</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">classname =</span> <span class="st">"Tree"</span>,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">public =</span> <span class="fu">list</span>(</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">min_samples =</span> <span class="st">"numeric"</span>, </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">max_depth =</span> <span class="st">"numeric"</span>,</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">mode =</span> <span class="st">"character"</span>,</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">df =</span> <span class="st">"data.frame"</span>,</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">root =</span> <span class="cn">NULL</span>,</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">initialize =</span> </span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(min_samples, max_depth, mode, df, <span class="at">root =</span> <span class="cn">NULL</span>){</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>          self<span class="sc">$</span>min_samples <span class="ot">=</span> min_samples</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>          self<span class="sc">$</span>max_depth <span class="ot">=</span> max_depth</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>          self<span class="sc">$</span>mode <span class="ot">=</span> mode</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>          self<span class="sc">$</span>df <span class="ot">=</span> df</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>          self<span class="sc">$</span>root <span class="ot">=</span> root</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">get_entropy =</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(x){</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>(<span class="fu">length</span>(x) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="dv">0</span>)</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>          weights <span class="ot">=</span> <span class="fu">table</span>(x)<span class="sc">/</span><span class="fu">length</span>(x)</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>          info_content <span class="ot">=</span> <span class="sc">-</span>weights<span class="sc">*</span><span class="fu">log2</span>(weights)</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>          entropy <span class="ot">=</span> <span class="fu">sum</span>(info_content)</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>          <span class="fu">return</span>(entropy)</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">get_gini_impurity =</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(x){</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>        <span class="co">#Assume x is a factor with labels</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="fu">length</span>(x) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="dv">0</span>)</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>        weights <span class="ot">=</span> <span class="fu">table</span>(x)<span class="sc">/</span><span class="fu">length</span>(x)</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>        weights_squared <span class="ot">=</span> weights<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>        sum_of_squares <span class="ot">=</span> <span class="fu">sum</span>(weights_squared)</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>        gini <span class="ot">=</span> <span class="dv">1</span> <span class="sc">-</span> sum_of_squares</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(gini)</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>      },</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>      <span class="at">get_information_gain =</span></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(parent, l_child, r_child, <span class="at">mode =</span> self<span class="sc">$</span>mode){</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>        <span class="co">#Get weights in each child</span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>        weight_l <span class="ot">=</span> <span class="fu">nrow</span>(l_child)<span class="sc">/</span><span class="fu">nrow</span>(parent)</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>        weight_r <span class="ot">=</span> <span class="fu">nrow</span>(r_child)<span class="sc">/</span><span class="fu">nrow</span>(parent)</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>        <span class="co">#Choose mode</span></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(mode <span class="sc">==</span> <span class="st">"gini"</span>){</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>          gain <span class="ot">=</span> self<span class="sc">$</span><span class="fu">get_gini_impurity</span>(parent[, <span class="fu">ncol</span>(parent)]) <span class="sc">-</span> (weight_l<span class="sc">*</span>self<span class="sc">$</span><span class="fu">get_gini_impurity</span>(l_child[, <span class="fu">ncol</span>(l_child)]) <span class="sc">+</span> weight_r<span class="sc">*</span>self<span class="sc">$</span><span class="fu">get_gini_impurity</span>(r_child[, <span class="fu">ncol</span>(r_child)]))</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>          gain <span class="ot">=</span> self<span class="sc">$</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(parent[, <span class="fu">ncol</span>(parent)])) <span class="sc">-</span> (weight_l<span class="sc">*</span>self<span class="sc">$</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(l_child[, <span class="fu">ncol</span>(l_child)])) <span class="sc">+</span> weight_r<span class="sc">*</span>self<span class="sc">$</span><span class="fu">get_entropy</span>(<span class="fu">as.character</span>(r_child[, <span class="fu">ncol</span>(r_child)])))</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>      },</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>      <span class="at">check_purity =</span> </span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(data){</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Get unique labels</span></span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>          labels <span class="ot">=</span> <span class="fu">length</span>(<span class="fu">unique</span>(data[, <span class="fu">ncol</span>(data)]))</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Check if there is only one</span></span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>          <span class="fu">ifelse</span>(labels <span class="sc">==</span> <span class="dv">1</span>, <span class="fu">return</span>(<span class="cn">TRUE</span>), <span class="fu">return</span>(<span class="cn">FALSE</span>))</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>      <span class="at">classify_data =</span> </span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(data){</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Get labels</span></span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>          get_labels <span class="ot">=</span> data[, <span class="fu">ncol</span>(data)]</span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Get label frequency and max</span></span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>          label_freq <span class="ot">=</span> <span class="fu">table</span>(get_labels)</span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>          label_freq_a <span class="ot">=</span> <span class="fu">as.data.frame</span>(label_freq)</span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>          label_dom <span class="ot">=</span> <span class="fu">max</span>(label_freq)</span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Get classification</span></span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(label_freq_a)){</span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span>(label_freq_a<span class="sc">$</span>Freq[i] <span class="sc">==</span> label_dom){</span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>              classification <span class="ot">=</span> <span class="fu">as.character</span>(label_freq_a<span class="sc">$</span>get_labels[i])</span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>            } <span class="cf">else</span> {</span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>              <span class="cf">next</span>(i)</span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>          <span class="fu">return</span>(classification)</span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>      <span class="at">split_data =</span></span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(data, split_column, split_value){</span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>          split_c <span class="ot">=</span> data[[split_column]]</span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Filter the data into above and below</span></span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>          data_below <span class="ot">=</span> data[split_c <span class="sc">&lt;=</span> split_value, ]</span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>          data_above <span class="ot">=</span> data[split_c <span class="sc">&gt;</span> split_value, ]</span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>          <span class="fu">return</span>(<span class="fu">list</span>(data_above, data_below))</span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>      <span class="at">get_potential_splits =</span></span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(data){</span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Sorting stage</span></span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>          data <span class="ot">=</span> data</span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>          col_n <span class="ot">=</span> <span class="fu">ncol</span>(data) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>col_n){</span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>            data_i <span class="ot">=</span> <span class="fu">sort</span>(data[, i])</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>            data[, i] <span class="ot">=</span> data_i</span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Creating the splits</span></span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>          dat <span class="ot">=</span> data[<span class="dv">0</span>, ]</span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>col_n){</span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">nrow</span>(data)){</span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>              curr_val <span class="ot">=</span> data[i, j]</span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>              previous_val <span class="ot">=</span> data[(i<span class="dv">-1</span>), j]</span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>              potential_val <span class="ot">=</span> (curr_val <span class="sc">+</span> previous_val)<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>              dat[(i<span class="dv">-1</span>), j] <span class="ot">=</span> potential_val</span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>          dat[<span class="fu">nrow</span>(dat)<span class="sc">+</span><span class="dv">1</span>, ] <span class="ot">=</span> data[<span class="fu">nrow</span>(data), ]</span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>          dat <span class="ot">=</span> dat[, <span class="dv">1</span><span class="sc">:</span>col_n]</span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>          potential_splits <span class="ot">=</span> <span class="fu">as.data.frame</span>(dat)</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>(<span class="fu">ncol</span>(potential_splits) <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>            <span class="fu">colnames</span>(potential_splits)[[<span class="dv">1</span>]] <span class="ot">=</span> <span class="fu">colnames</span>(data)[[<span class="dv">1</span>]]</span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>          <span class="fu">return</span>(potential_splits)</span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>      <span class="at">determine_best_split =</span></span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(data, potential_splits, <span class="at">mode =</span> self<span class="sc">$</span>mode){</span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>        <span class="co">#Initialize information, feature, feature val</span></span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>        running_gain <span class="ot">=</span> <span class="sc">-</span><span class="cn">Inf</span></span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>        best_split_value <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>        best_split_column <span class="ot">=</span> <span class="st">""</span></span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>        <span class="co">#Find best entropy over potential splits</span></span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(potential_splits)){</span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">unique</span>(potential_splits[, j])){</span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>            mask_val <span class="ot">=</span> i </span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>            mask_col <span class="ot">=</span> j</span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>            splits <span class="ot">=</span> self<span class="sc">$</span><span class="fu">split_data</span>(<span class="at">data =</span> data, <span class="at">split_column =</span> mask_col, <span class="at">split_value =</span> mask_val)</span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>            relative_gain <span class="ot">=</span> self<span class="sc">$</span><span class="fu">get_information_gain</span>(<span class="at">parent =</span> data, <span class="at">r_child =</span> splits[[<span class="dv">1</span>]], <span class="at">l_child =</span> splits[[<span class="dv">2</span>]], <span class="at">mode =</span> mode)</span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span>(relative_gain <span class="sc">&gt;</span> running_gain){</span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a>              running_gain <span class="ot">=</span> relative_gain</span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>              best_split_value <span class="ot">=</span> mask_val</span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>              best_split_column <span class="ot">=</span> <span class="fu">colnames</span>(potential_splits)[j]</span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>            } <span class="cf">else</span> {</span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>              <span class="cf">next</span>(i)</span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(<span class="fu">list</span>(best_split_column, best_split_value))</span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>      },</span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>      <span class="at">build_tree =</span> </span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(<span class="at">df =</span> self<span class="sc">$</span>df, <span class="at">curr_depth =</span> <span class="dv">0</span>){</span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>          data <span class="ot">=</span> df</span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Split until stopping condition are met</span></span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>(<span class="sc">!</span><span class="fu">any</span>(self<span class="sc">$</span><span class="fu">check_purity</span>(data), </span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">nrow</span>(data) <span class="sc">&lt;</span> self<span class="sc">$</span>min_samples, </span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>                  curr_depth <span class="sc">==</span> self<span class="sc">$</span>max_depth)){</span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a>            <span class="co">#Keep splitting</span></span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>            <span class="co">#Get potential and best splits</span></span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a>            potential_splits <span class="ot">=</span> self<span class="sc">$</span><span class="fu">get_potential_splits</span>(data)</span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a>            best_split <span class="ot">=</span> self<span class="sc">$</span><span class="fu">determine_best_split</span>(data, potential_splits, <span class="at">mode =</span> self<span class="sc">$</span>mode)</span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a>            <span class="co">#Record best split value and feature</span></span>
+<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a>            split_column <span class="ot">=</span> best_split[[<span class="dv">1</span>]]</span>
+<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a>            split_value <span class="ot">=</span> best_split[[<span class="dv">2</span>]]</span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a>            <span class="co">#Split by best combo and assign</span></span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a>            data_split <span class="ot">=</span> self<span class="sc">$</span><span class="fu">split_data</span>(data, split_column, split_value)</span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a>            data_above <span class="ot">=</span> data_split[[<span class="dv">1</span>]]</span>
+<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a>            data_below <span class="ot">=</span> data_split[[<span class="dv">2</span>]]</span>
+<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a>            <span class="co">#Recursion occurs here</span></span>
+<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a>            left_subtree <span class="ot">=</span> self<span class="sc">$</span><span class="fu">build_tree</span>(<span class="at">df =</span> data_below, <span class="at">curr_depth =</span> curr_depth <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a>            right_subtree <span class="ot">=</span> self<span class="sc">$</span><span class="fu">build_tree</span>(<span class="at">df =</span> data_above, <span class="at">curr_depth =</span> curr_depth <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>            <span class="co">#Return decision node</span></span>
+<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a>            <span class="fu">return</span>(Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">depth =</span> curr_depth, <span class="at">left =</span> left_subtree, <span class="at">right =</span> right_subtree, <span class="at">feature =</span> split_column, <span class="at">value =</span> split_value))</span>
+<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a>          } <span class="cf">else</span> {</span>
+<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a>            <span class="co">#Stop splitting</span></span>
+<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a>            <span class="co">#Compute leaf node</span></span>
+<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a>            leaf.value <span class="ot">=</span> self<span class="sc">$</span><span class="fu">classify_data</span>(data)</span>
+<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a>            <span class="fu">return</span>(Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> leaf.value, <span class="at">depth =</span> curr_depth))</span>
+<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a>        }, </span>
+<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a>      <span class="at">print_tree =</span></span>
+<span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(<span class="at">tree =</span> self<span class="sc">$</span><span class="fu">build_tree</span>(self<span class="sc">$</span>df)){</span>
+<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Print decision node</span></span>
+<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(tree<span class="sc">$</span>feature)){</span>
+<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a>          <span class="fu">cat</span>(tree<span class="sc">$</span>depth, <span class="fu">paste0</span>(<span class="fu">paste</span>(<span class="fu">rep</span>(<span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, tree<span class="sc">$</span>depth), <span class="at">collapse =</span> <span class="st">""</span>), tree<span class="sc">$</span>depth), tree<span class="sc">$</span>feature, <span class="st">"&lt;="</span>, tree<span class="sc">$</span>value, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)}</span>
+<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Check for nullity of left and right; leaf</span></span>
+<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>(<span class="sc">!</span><span class="fu">any</span>(<span class="fu">is.null</span>(tree<span class="sc">$</span>left), <span class="fu">is.null</span>(tree<span class="sc">$</span>right))){</span>
+<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a>            self<span class="sc">$</span><span class="fu">print_tree</span>(<span class="at">tree =</span> tree<span class="sc">$</span>left)</span>
+<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a>            self<span class="sc">$</span><span class="fu">print_tree</span>(<span class="at">tree =</span> tree<span class="sc">$</span>right)</span>
+<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a>          } <span class="cf">else</span> {</span>
+<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>            <span class="fu">cat</span>(<span class="fu">paste0</span>(tree<span class="sc">$</span>depth, <span class="fu">paste</span>(<span class="fu">rep</span>(<span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, tree<span class="sc">$</span>depth), <span class="at">collapse =</span> <span class="st">""</span>), tree<span class="sc">$</span>depth), <span class="st">"predict:"</span>, tree<span class="sc">$</span>value, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit =</span></span>
+<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(){</span>
+<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a>          <span class="co">#Build the tree once for predictions only</span></span>
+<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a>          self<span class="sc">$</span>root <span class="ot">=</span> self<span class="sc">$</span><span class="fu">build_tree</span>()</span>
+<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a>      <span class="at">make_prediction =</span> </span>
+<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(y, <span class="at">tree =</span> self<span class="sc">$</span>root){</span>
+<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>(<span class="fu">class</span>(tree<span class="sc">$</span>value) <span class="sc">==</span> <span class="st">"character"</span>) <span class="fu">return</span>(tree<span class="sc">$</span>value)</span>
+<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a>          partition.val <span class="ot">=</span> tree<span class="sc">$</span>value</span>
+<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a>          feature.num <span class="ot">=</span> <span class="fu">which</span>(<span class="fu">names</span>(self<span class="sc">$</span>df) <span class="sc">==</span> tree<span class="sc">$</span>feature)</span>
+<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>(y[[feature.num]] <span class="sc">&lt;</span> partition.val){</span>
+<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a>           self<span class="sc">$</span><span class="fu">make_prediction</span>(<span class="at">y =</span> y, <span class="at">tree =</span> tree<span class="sc">$</span>left) </span>
+<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a>          } <span class="cf">else</span> {</span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a>            self<span class="sc">$</span><span class="fu">make_prediction</span>(<span class="at">y =</span> y, <span class="at">tree =</span> tree<span class="sc">$</span>right)</span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a>        }, </span>
+<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a>      <span class="at">get_predictions =</span></span>
+<span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(Y){</span>
+<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a>          predict.dt <span class="ot">=</span> <span class="fu">double</span>(<span class="at">length =</span> <span class="fu">nrow</span>(Y))</span>
+<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(Y)){</span>
+<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a>            row.val <span class="ot">=</span> <span class="fu">as.numeric</span>(Y[i, <span class="dv">1</span><span class="sc">:</span>(<span class="fu">ncol</span>(Y)<span class="sc">-</span><span class="dv">1</span>)])</span>
+<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a>            predict.dt[i] <span class="ot">=</span> self<span class="sc">$</span><span class="fu">make_prediction</span>(<span class="at">y =</span> row.val)</span>
+<span id="cb8-216"><a href="#cb8-216" aria-hidden="true" tabindex="-1"></a>            <span class="cf">next</span>(i)</span>
+<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a>          <span class="fu">return</span>(predict.dt)</span>
+<span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a>    ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="testing" class="level1">
+<h1>Testing</h1>
+<section id="salmon-tuna-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="salmon-tuna-dataset">Salmon-tuna dataset</h2>
+<p>We begin by first creating a train test split</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2310</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>salmon_fish_split <span class="ot">=</span> <span class="fu">train_test_split</span>(<span class="at">data =</span> salmon_fish, <span class="at">test =</span> <span class="fl">0.1</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>salmon_fish_train <span class="ot">=</span> <span class="fu">subset</span>(salmon_fish_split, salmon_fish_split<span class="sc">$</span>my.folds <span class="sc">==</span> <span class="st">"train"</span>)[, <span class="sc">-</span><span class="dv">4</span>]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>salmon_fish_test <span class="ot">=</span> <span class="fu">subset</span>(salmon_fish_split, salmon_fish_split<span class="sc">$</span>my.folds <span class="sc">==</span> <span class="st">"test"</span>)[, <span class="sc">-</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We first specify the parameters for our new tree by creating an instance of the <code>Tree</code> class</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dtree <span class="ot">=</span> Tree<span class="sc">$</span><span class="fu">new</span>(<span class="at">min_samples =</span> <span class="dv">10</span>, </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">max_depth =</span> <span class="dv">5</span>, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">mode =</span> <span class="st">"entropy"</span>, </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">df =</span> salmon_fish_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We then can build the tree according to these parameters. Lets run the fit method as well in anticipation for making a prediction after. We will also print three</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Build tree for viewing</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>btree <span class="ot">=</span> dtree<span class="sc">$</span><span class="fu">build_tree</span>()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Store for predictions</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>dtree<span class="sc">$</span><span class="fu">fit</span>()</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Print the tree</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>dtree<span class="sc">$</span><span class="fu">print_tree</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0 0 length &lt;= 2.996015 
+1   1 predict: tuna 
+1   1 weight &lt;= 4.006707 
+2       2 predict: salmon 
+2       2 length &lt;= 6.978225 
+3           3 length &lt;= 4.998481 
+4               4 weight &lt;= 6.948427 
+5                   5 predict: tuna 
+5                   5 predict: salmon 
+4               4 length &lt;= 6.017146 
+5                   5 predict: tuna 
+5                   5 predict: salmon 
+3           3 predict: tuna </code></pre>
+</div>
+</div>
+<p>We can make a prediction on a single value. If you remember the graph from my v1 version of the salmon-fish df, you can visually confirm that the function works correctly.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dtree<span class="sc">$</span><span class="fu">make_prediction</span>(<span class="at">y =</span> <span class="fu">c</span>(<span class="fl">7.5</span>, <span class="fl">2.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "salmon"</code></pre>
+</div>
+</div>
+<p>We can then also make a prediction on the training set as well and calculate the accuracy for this particular train test split</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">=</span> salmon_fish_test<span class="sc">$</span>type <span class="sc">==</span> dtree<span class="sc">$</span><span class="fu">get_predictions</span>(<span class="at">Y =</span> salmon_fish_test)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>accuracy <span class="ot">=</span> <span class="fu">length</span>(<span class="fu">which</span>(predictions <span class="sc">==</span> <span class="cn">TRUE</span>))<span class="sc">/</span><span class="fu">nrow</span>(salmon_fish_test)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(accuracy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.94</code></pre>
+</div>
+</div>
+<p>The accuracy for this particular split is 94%.</p>
+</section>
+<section id="iris-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="iris-dataset">Iris dataset</h2>
+<p>Below is an example for the iris data set. I have changed the parameters of the tree as well this time.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Train test split</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2310</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>iris_split <span class="ot">=</span> <span class="fu">train_test_split</span>(<span class="at">data =</span> iris, <span class="at">test =</span> <span class="fl">0.1</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>iris_train <span class="ot">=</span> <span class="fu">subset</span>(iris_split, iris_split<span class="sc">$</span>my.folds <span class="sc">==</span> <span class="st">"train"</span>)[, <span class="sc">-</span><span class="dv">6</span>]</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>iris_test <span class="ot">=</span> <span class="fu">subset</span>(iris_split, iris_split<span class="sc">$</span>my.folds <span class="sc">==</span> <span class="st">"test"</span>)[, <span class="sc">-</span><span class="dv">6</span>]</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Create instance </span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>itree <span class="ot">=</span> Tree<span class="sc">$</span><span class="fu">new</span>(<span class="at">min_samples =</span> <span class="dv">7</span>, </span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">max_depth =</span> <span class="dv">7</span>, </span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">mode =</span> <span class="st">"gini"</span>, </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">df =</span> iris_train)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co">#Build tree for viewing</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>jtree <span class="ot">=</span> dtree<span class="sc">$</span><span class="fu">build_tree</span>()</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co">#Store for predictions</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>itree<span class="sc">$</span><span class="fu">fit</span>()</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">#Print the tree</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>itree<span class="sc">$</span><span class="fu">print_tree</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0 0 Petal.Length &lt;= 1.9 
+1   1 predict: setosa 
+1   1 Petal.Width &lt;= 1.7 
+2       2 Petal.Length &lt;= 4.9 
+3           3 Petal.Width &lt;= 1.65 
+4               4 predict: versicolor 
+4               4 predict: virginica 
+3           3 predict: virginica 
+2       2 Petal.Length &lt;= 4.8 
+3           3 predict: virginica 
+3           3 predict: virginica </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Accuracy on testing data</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">=</span> iris_test<span class="sc">$</span>Species <span class="sc">==</span> itree<span class="sc">$</span><span class="fu">get_predictions</span>(<span class="at">Y =</span> iris_test)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>accuracy <span class="ot">=</span> <span class="fu">length</span>(<span class="fu">which</span>(predictions <span class="sc">==</span> <span class="cn">TRUE</span>))<span class="sc">/</span><span class="fu">nrow</span>(iris_test)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(accuracy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+</div>
+<p>The accuracy for this particular split is 100%.</p>
+</section>
+<section id="single-variable-example" class="level2">
+<h2 class="anchored" data-anchor-id="single-variable-example">Single variable example</h2>
+<p>Below, I would just like to highlight that this implementation works on data set with a single predictor only.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ztree <span class="ot">=</span> Tree<span class="sc">$</span><span class="fu">new</span>(<span class="at">min_samples =</span> <span class="dv">7</span>, </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">max_depth =</span> <span class="dv">6</span>, </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">mode =</span> <span class="st">"entropy"</span>, </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">df =</span> iris[, <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">5</span>)])</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>ltree <span class="ot">=</span> ztree<span class="sc">$</span><span class="fu">build_tree</span>()</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>ztree<span class="sc">$</span><span class="fu">fit</span>()</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>ztree<span class="sc">$</span><span class="fu">print_tree</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0 0 Petal.Length &lt;= 1.9 
+1   1 predict: setosa 
+1   1 Petal.Length &lt;= 4.7 
+2       2 Petal.Length &lt;= 4.4 
+3           3 predict: versicolor 
+3           3 Petal.Length &lt;= 4.5 
+4               4 Petal.Length &lt;= 4.5 
+5                   5 Petal.Length &lt;= 4.5 
+6                       6 predict: versicolor 
+6                       6 predict: virginica 
+5                   5 predict: virginica 
+4               4 predict: versicolor 
+2       2 Petal.Length &lt;= 5.1 
+3           3 Petal.Length &lt;= 4.9 
+4               4 Petal.Length &lt;= 4.8 
+5                   5 predict: virginica 
+5                   5 predict: virginica 
+4               4 Petal.Length &lt;= 5 
+5                   5 predict: virginica 
+5                   5 Petal.Length &lt;= 5.1 
+6                       6 predict: virginica 
+6                       6 predict: virginica 
+3           3 predict: virginica </code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><i class="fa-regular fa-copyright" aria-label="copyright"></i> Rashmin Chitale, 2024<br> All content licensed under <i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> <i class="fa-brands fa-creative-commons-by" aria-label="creative-commons-by"></i> <i class="fa-brands fa-creative-commons-sa" aria-label="creative-commons-sa"></i> <i class="fa-brands fa-creative-commons-nc" aria-label="creative-commons-nc"></i> <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">(CC BY-NC-SA 4.0)</a><br></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Made with <i class="fa-brands fa-r-project" aria-label="r-project"></i>, <a href="https://quarto.org/">Quarto</a> and code snippets from <a href="../..\posts/quarto-website-migration.html">these folks</a> <i class="fa-solid fa-users" aria-label="users"></i> <br> <a href="https://github.com/Rcshmin/rcpersonalweb">Source code at GitHub</a> <i class="fa-brands fa-github" aria-label="github"></i></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
