@@ -2,6 +2,7 @@
   {
     "listing": "/posts.html",
     "items": [
+      "/posts/2025-01-16-leetcode-max-depth-tree/index.html",
       "/posts/2024-12-11-k-fold-cv/index.html",
       "/posts/2025-01-13-decision-tree-classifier-oop/index.html",
       "/posts/2024-11-26-k-nearest-neighbors/index.html",
