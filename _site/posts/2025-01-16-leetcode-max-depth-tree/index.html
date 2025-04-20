@@ -475,11 +475,11 @@ What is the maximum depth of a tree?
 <p>I started by defining a class, <code>Tree</code> with attribute <code>depth</code> as double initialized as being <span class="math inline">\(-\infty\)</span>. I also create two methods <code>max.depth</code>, which finds the max depth of a tree, and a dummy method <code>max_depth</code> for printing the result of the first method.</p>
 <p>The first method is the primary operator; <code>max.depth</code> is a recursive function that works in the following way</p>
 <p>The arguments of the function are a tree (to be inputted in), and depth which is initialized as 0. The function first checks for the edge case of a null tree; if a null tree is inputted, it returns the initialized depth of 0.</p>
-<p>The current depth is increased by 1 to make the ‘up depth’. The up depth is then compared to the global depth stored as an attribute. If it greater, the attribute value is updated with the up deth value. If not, it is kept the same.</p>
+<p>The current depth is increased by 1 to make the ‘up depth’. The up depth is then compared to the global depth stored as an attribute. If it is greater, the attribute value is updated with the up depth value. If not, it is kept the same.</p>
 <p>The function then checks the structure of the children node for the current tree. A binary tree can have a left node only, right node only or both children nodes. The structure is stored as several logicals indicating which of the above cases are true. A nested if statement is then used to carry out recursion depending on the child structure</p>
 <p>If only a single child node exists, that being the left or right, the function is called recursively with updated input arguments on that child node. What this means is that, the input tree is updated to the tree stored in the left or right attribute of the current node. The depth fed in the recursive call is also the up depth.</p>
 <p>If both children node exist, the recursive call is made on both the left and right child node, with the updated trees being fed through likewise. If the current node has no children, then the stopping condition takes place, which is to return nothing.</p>
-<p>In this way, the function simply recursively descends down a tree, and compares its current depth to the global depth, updating that value when neccessary.</p>
+<p>In this way, the function simply recursively descends down a tree, and compares its current depth to the global depth, updating that value when necessary.</p>
 <p>The second method simply runs the first method, and prints it result.</p>
 <p>Here are some test cases.</p>
 <div class="cell">
