@@ -1,5 +1,5 @@
 ---
-title: "My Blog"
+title: "My Posts"
 listing: 
   type: grid
   contents: posts # this name must match the name of the folder you created

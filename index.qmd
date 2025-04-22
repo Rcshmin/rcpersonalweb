@@ -2,20 +2,35 @@
 title: "Rashmin Chitale"
 about:
   template: jolla
-  image: /images/avatar.png
+  image: /images/avatar2.jpg
   links:
     - icon: envelope-at
       text: rashmin.chitale@gmail.com
 ---
 
-Hello and welcome to my personal website, your one stop shop for viewing my self-indulgent display of personal projects. I am a recent university graduate who studied actuarial studies. Some of my interests include mathematics, data science and cricket (the sport🏏). On this website, you will find some projects and other code related endeavors I have worked on in my downtime. Most of them are a from scratch implementation of a data science algorithm in R. Take a look if you are interested.
+::: callout-note
+## Who am I?
+My name is `Rashmin Chitale`.
+:::
 
-## Education
+::: callout-warning
+## What is this website?
+It is my personal website.
+:::
 
-Macquarie University \| Bachelor of Actuarial Studies with Bachelor of Applied Finance \| 2021 - 2024
+::: callout-important
+## What is the purpose of this website?
+On this website, you will find some projects and other code related endeavors I have worked on in my downtime.
+:::
 
-Ryde Secondary College \| Higher School Certificate \| 2015 - 2020
+::: callout-tip
+## What are your interests?
+Some of my interests include mathematics, statistics, data science, cricket🏏and fishing {{< fa fish >}}.
+:::
 
-## Experience
+::: callout-caution
+## What is your educational background?
+I am a recent university graduate who studied a Bachelor of Actuarial Studies with a Bachelor of Applied Finance.
+:::
 
-Australian Bureau of Statistics \| Analyst \| January 2022 - Present
+

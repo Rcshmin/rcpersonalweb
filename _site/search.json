@@ -2,7 +2,7 @@
   {
     "objectID": "posts.html",
     "href": "posts.html",
-    "title": "My Blog",
+    "title": "My Posts",
     "section": "",
     "text": "Maximum depth of a binary tree\n\n\nMy solution to leetcode problem 104\n\n\n\nJan 16, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nK-fold cross validation from scratch\n\n\nA from scratch implementation of k-fold cross validation in R and some examples\n\n\n\nMar 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDecision tree classifier from scratch v2\n\n\nFixing my previous attempt using the OOP framework\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nK-nn from scratch\n\n\nA from scratch implementation of the k-nearest-neighbors algorithm in R\n\n\n\nOct 24, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDecision tree classifier from scratch v1\n\n\nA from scratch implementation of the decision tree classifier algorithm in R\n\n\n\nMay 7, 2022\n\n\n\n\n\n\n\n\nNo matching items"
   },
@@ -123,21 +123,7 @@
     "href": "index.html",
     "title": "Rashmin Chitale",
     "section": "",
-    "text": "Hello and welcome to my personal website, your one stop shop for viewing my self-indulgent display of personal projects. I am a recent university graduate who studied actuarial studies. Some of my interests include mathematics, data science and cricket (the sport🏏). On this website, you will find some projects and other code related endeavors I have worked on in my downtime. Most of them are a from scratch implementation of a data science algorithm in R. Take a look if you are interested."
-  },
-  {
-    "objectID": "index.html#education",
-    "href": "index.html#education",
-    "title": "Rashmin Chitale",
-    "section": "Education",
-    "text": "Education\nMacquarie University | Bachelor of Actuarial Studies with Bachelor of Applied Finance | 2021 - 2024\nRyde Secondary College | Higher School Certificate | 2015 - 2020"
-  },
-  {
-    "objectID": "index.html#experience",
-    "href": "index.html#experience",
-    "title": "Rashmin Chitale",
-    "section": "Experience",
-    "text": "Experience\nAustralian Bureau of Statistics | Analyst | January 2022 - Present"
+    "text": "Who am I?\n\n\n\nMy name is Rashmin Chitale.\n\n\n\n\n\n\n\n\nWhat is this website?\n\n\n\nIt is my personal website.\n\n\n\n\n\n\n\n\nWhat is the purpose of this website?\n\n\n\nOn this website, you will find some projects and other code related endeavors I have worked on in my downtime.\n\n\n\n\n\n\n\n\nWhat are your interests?\n\n\n\nSome of my interests include mathematics, statistics, data science, cricket🏏and fishing .\n\n\n\n\n\n\n\n\nWhat is your educational background?\n\n\n\nI am a recent university graduate who studied a Bachelor of Actuarial Studies with a Bachelor of Applied Finance."
   },
   {
     "objectID": "posts/2024-11-26-k-nearest-neighbors/index.html",
