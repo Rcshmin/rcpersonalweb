@@ -1,0 +1,210 @@
+---
+title: "Same tree?"
+description: "My solution to leetcode problem 100"
+author:
+  - name: Rashmin Chitale
+    url: 
+date: 04-22-2025
+categories: [leetcode,R] # self-defined categories
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+---
+
+```{r setup, include=FALSE}
+library(R6)
+```
+
+# The background
+
+::: callout-note
+## When are two trees the same?
+
+Two trees are the same when they share exactly the `same structure`. This includes everything from the depth, the positions of the nodes, and the values of the nodes themselves.
+:::
+
+A simple example where 2 trees are exactly the same is when
+
+::::{layout-ncol=2}
+
+:::{}
+```{mermaid}
+graph TD
+  A((01)) --> B((02))
+  A((01)) --> C((03))
+  B((02)) --> D((04))
+  B((02)) --> E((05))
+  C((03)) --> F((06))
+  C((03)) --> G((07))
+  
+```
+:::
+
+:::{}
+```{mermaid}
+graph TD
+  A((01)) --> B((02))
+  A((01)) --> C((03))
+  B((02)) --> D((04))
+  B((02)) --> E((05))
+  C((03)) --> F((06))
+  C((03)) --> G((07))
+  
+```
+:::
+::::
+
+versus an example when 2 trees are not the same is
+
+::::{layout-ncol=2}
+
+:::{}
+```{mermaid}
+graph TD
+  A((01)) --> B((02))
+  A((01)) --> C((03))
+  B((02)) --> D((04))
+  B((02)) --> E((05))
+```
+:::
+
+:::{}
+```{mermaid}
+graph TD
+  A((01)) --> B((02))
+  A((01)) --> C((03))
+  C((03)) --> D((04))
+  C((03)) --> E((05))
+
+  
+```
+:::
+::::
+
+Clearly, visually it is quite simple to observe whether a tree is the same or not, but how can this be coded.
+
+# The solution
+
+In my solution, I will carry over some of the code from my other [post](../2025-01-16-leetcode-max-depth-tree/index.qmd). I first define a node as follows 
+
+```{r}
+Node = R6Class(
+  classname = "Node", 
+  public = list(
+    left = NA,
+    right = NA,
+    value = "numeric",
+    initialize =
+      function(left = NA, right = NA, value = NA){
+        self$left = left
+        self$right = right
+        self$value = value
+      }
+  )
+)
+
+```
+
+The main algorithm is then as follows
+
+```{r}
+
+Tree = R6Class(
+  classname = "Tree",
+  public = list(
+    initialize = function(){},
+    same.tree = 
+      function(tree1, tree2){
+        
+        #check for nullity of children nodes for both trees
+        left.na1 = !is.environment(tree1$left) & is.environment(tree1$right)
+        right.na1 = is.environment(tree1$left) & !is.environment(tree1$right)
+        both.na1 = !is.environment(tree1$left) & !is.environment(tree1$right)
+        left.na2 = !is.environment(tree2$left) & is.environment(tree2$right)
+        right.na2 = is.environment(tree2$left) & !is.environment(tree2$right)
+        both.na2 = !is.environment(tree2$left) & !is.environment(tree2$right)
+        
+        #are these conditions the same across both trees
+        left.eq = left.na1 == left.na2
+        right.eq = right.na1 == right.na2
+        both.eq = both.na1 == both.na2
+        all.eq = all(left.eq, right.eq, both.eq)
+        
+        if(tree1$value == tree2$value & all.eq == TRUE){
+          #choose what type of recursion to carry out
+          if(left.na1 == TRUE){
+            self$same.tree(tree1$right, tree2$right)
+          } else if(right.na1 == TRUE){
+            self$same.tree(tree1$left, tree2$left)
+          } else if (both.na1 == TRUE){
+            #no children for both trees at current node, and value are same so...
+            return(TRUE)
+          } else {
+            self$same.tree(tree1$left, tree2$left)
+            self$same.tree(tree1$right, tree2$right)
+          }
+        } else {
+          #trees are not the same
+          return(FALSE)
+        }
+      }
+  ))
+
+```
+
+The logic behind checking whether two trees are the same as follows
+
+1. Starting at the root node of both trees, we check the nullity of the children node of the root node for both trees. That is, if they exist and the structure (left, right or both)
+2. If this structure is the same across both trees, AND the value of the root nodes is the same as well, we assume the tree is the same thus far at the current level. If not, then the trees are different.
+3. We then recursively descend down into the children node (if they exist, if they do not the trees are the same since it passed the previous checks) of both trees and repeat the above checks.
+
+```{r echo = T}
+
+##### Test case 1... #####
+
+tree1 = Node$new(value = 1)
+tree2 = Node$new(value = 1)
+
+Tree$new()$same.tree(tree1,tree2)
+
+##### Test case 2... #####
+
+tree3 = Node$new(value = 1)
+tree3[["left"]] = Node$new(value = 2)
+tree3[["right"]] = Node$new(value = 3)
+
+Tree$new()$same.tree(tree1,tree3)
+
+##### Test case 3... #####
+
+tree4 = Node$new(value = 1)
+tree4[["left"]] = Node$new(value = 2)
+tree4[["left"]][["left"]] = Node$new(value = 3) 
+tree4[["left"]][["left"]][["left"]] = Node$new(value = 4) 
+tree4[["left"]][["left"]][["left"]][["left"]] = Node$new(value = 5) 
+
+Tree$new()$same.tree(tree3,tree4)
+
+##### Test case 4... #####
+
+tree5 = Node$new(value = 5)
+tree5[["left"]] = Node$new(value = 4)
+tree5[["left"]][["left"]] = Node$new(value = 3) 
+tree5[["left"]][["left"]][["left"]] = Node$new(value = 2) 
+tree5[["left"]][["left"]][["left"]][["left"]] = Node$new(value = 1) 
+
+Tree$new()$same.tree(tree4,tree5)
+
+##### Test case 5... #####
+
+tree6 = Node$new(value = 1000)
+tree6[["left"]] = Node$new(value = 9999)
+tree6[["left"]][["right"]] = Node$new(value = 991239)
+tree6[["left"]][["right"]][["left"]] = Node$new(value = 19)
+                          
+tree7 = Node$new(value = 1000)
+tree7[["left"]] = Node$new(value = 9999)
+tree7[["left"]][["right"]] = Node$new(value = 991239)
+tree7[["left"]][["right"]][["left"]] = Node$new(value = 19)
+                           
+Tree$new()$same.tree(tree6,tree7)
+
+```
