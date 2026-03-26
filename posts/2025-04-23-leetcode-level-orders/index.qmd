@@ -1,0 +1,163 @@
+---
+title: "Level orders of a binary tree"
+description: "A solution (kind of) to leetcode problem 102"
+author:
+  - name: Rashmin Chitale
+    url: 
+date: 04-22-2025
+categories: [leetcode,R] # self-defined categories
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+---
+
+```{r setup, include=FALSE}
+library(R6)
+```
+
+# The background
+
+::: callout-note
+## When are level orders of a binary tree?
+The level orders of a tree are the order of each node at each level (depth) of a binary tree (going in a left to right fashion).
+:::
+
+It is easy to understand what this is with an example.
+
+```{mermaid}
+%%| fig-align: center
+graph TD
+  A((01)) --> B((02))
+  A((01)) --> C((03))
+  B((02)) --> D((04))
+  B((02)) --> E((05))
+  C((03)) --> F((06))
+  C((03)) --> G((07))
+  
+```
+
+For this above tree we would output the following `[1], [2,3], [4,5,6,7]`
+
+```{mermaid}
+%%| fig-align: center
+graph TD
+  A((01)) --> B((02))
+  A((01)) --- C((03)):::hidden
+  B((02)) --> D((04))
+  B((02)) --> E((05))
+  E((05)) --> F((06))
+  E((05)) --> G((07))
+
+  %% Make link B-->C invisible (this is the second link, index 1)
+  linkStyle 1 stroke:transparent,stroke-width:0
+  
+```
+
+
+And for this tree we would output `[1], [2], [4,5], [6,7]`
+
+# The solution
+
+In my solution, I will carry over some of the code from my other [post](../2025-01-16-leetcode-max-depth-tree/index.qmd). I first define a node as follows
+
+```{r}
+Node = R6Class(
+  classname = "Node", 
+  public = list(
+    left = NA,
+    right = NA,
+    value = "numeric",
+    initialize =
+      function(left = NA, right = NA, value = NA){
+        self$left = left
+        self$right = right
+        self$value = value
+      }
+  )
+)
+
+```
+
+The main algorithm is then as follows
+
+```{r}
+LTree = R6Class(
+  classname = "Tree",
+  public = list(
+    depth = "numeric",
+    dat = "data.frame",
+    initialize = 
+      function(depth, dat){
+        self$depth = -Inf
+        self$dat = data.frame(depth = c(NA), value = c(NA), index = c(NA))
+      },
+    node.df =
+      function(tree, index = 1, cdepth = 0){
+        
+        #increase current depth by 1
+        up.depth = cdepth + 1
+        
+        #compare to global depth and increase if larger
+        if(up.depth > self$depth){
+          self$depth = up.depth
+        }
+        
+        #add root node at depth 1 to df
+        if(up.depth == 1){
+          self$dat[1, ] = c(1,tree[["value"]],1)
+        }
+  
+        #check for nullity of children nodes
+        left.na = is.environment(tree[["right"]]) & !is.environment(tree[["left"]])
+        right.na = !is.environment(tree[["right"]]) & is.environment(tree[["left"]])
+        both.na = !is.environment(tree[["right"]]) & !is.environment(tree[["left"]])
+        
+        #array index of children node
+        left.index = 2*index
+        right.index = 2*index + 1
+        
+        #choose what type of recursion to carry out
+        if(left.na == TRUE){
+          self$dat[nrow(self$dat)+1,] = c(up.depth+1,tree[["right"]][["value"]],right.index)
+          self$node.df(tree$right, cdepth = up.depth, index = right.index)
+        } else if(right.na == TRUE){
+          self$dat[nrow(self$dat)+1,] = c(up.depth+1,tree[["left"]][["value"]],left.index)
+          self$node.df(tree$left, cdepth = up.depth, index = left.index)
+        } else if (both.na == TRUE){
+          return()
+        } else {
+          self$dat[nrow(self$dat)+1,] = c(up.depth+1,tree[["right"]][["value"]],right.index)
+          self$dat[nrow(self$dat)+1,] = c(up.depth+1,tree[["left"]][["value"]],left.index)
+          self$node.df(tree$right, cdepth = up.depth, index = right.index)
+          self$node.df(tree$left, cdepth = up.depth, index = left.index)
+        }
+
+      },
+    sort.ind =
+      function(value, index){
+        #this function sorts a vec of values, by the index values in another vec
+        ord.vals = double(length = length(value))
+        for(i in 1:length(index)){
+          min.ind = which(index  == min(index))
+          ord.vals[[i]] = value[min.ind]
+          index = index[-min.ind]
+          value = value[-min.ind]
+          next(i)
+        }
+        return(ord.vals)
+      },
+    level.traverse =
+      function(tree){
+        #this function takes the df containing node information, and sorts it
+        self$node.df(tree)
+        tree.levels = list()
+        for(i in 1:self$depth){
+        dat.subset = self$dat[which(self$dat$depth == i), ]
+        tree.levels[[i]] = self$sort.ind(dat.subset$value, dat.subset$index)
+        next(i)
+        }
+        return(tree.levels)
+      }
+  
+  ))
+```
+
+
