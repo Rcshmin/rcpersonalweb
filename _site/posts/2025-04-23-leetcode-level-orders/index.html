@@ -381,6 +381,51 @@ When are level orders of a binary tree?
 <span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>  ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>The algorithm works as expected on both of the trees we used as an example earlier.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>tree1 <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">1</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>tree1[[<span class="st">"left"</span>]] <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">2</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>tree1[[<span class="st">"right"</span>]] <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">3</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>tree1[[<span class="st">"left"</span>]][[<span class="st">"left"</span>]] <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">4</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>tree1[[<span class="st">"left"</span>]][[<span class="st">"right"</span>]] <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">5</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>tree1[[<span class="st">"right"</span>]][[<span class="st">"left"</span>]] <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">6</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>tree1[[<span class="st">"right"</span>]][[<span class="st">"right"</span>]] <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">7</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>LTree<span class="sc">$</span><span class="fu">new</span>()<span class="sc">$</span><span class="fu">level.traverse</span>(tree1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] 1
+
+[[2]]
+[1] 2 3
+
+[[3]]
+[1] 4 5 6 7</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tree2 <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">1</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>tree2[[<span class="st">"left"</span>]] <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">2</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>tree2[[<span class="st">"left"</span>]][[<span class="st">"left"</span>]] <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">4</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>tree2[[<span class="st">"left"</span>]][[<span class="st">"right"</span>]] <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">5</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>tree2[[<span class="st">"left"</span>]][[<span class="st">"right"</span>]][[<span class="st">"left"</span>]] <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">6</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>tree2[[<span class="st">"left"</span>]][[<span class="st">"right"</span>]][[<span class="st">"right"</span>]] <span class="ot">=</span> Node<span class="sc">$</span><span class="fu">new</span>(<span class="at">value =</span> <span class="dv">7</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>LTree<span class="sc">$</span><span class="fu">new</span>()<span class="sc">$</span><span class="fu">level.traverse</span>(tree2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] 1
+
+[[2]]
+[1] 2
+
+[[3]]
+[1] 4 5
+
+[[4]]
+[1] 6 7</code></pre>
+</div>
+</div>
 
 
 </section>

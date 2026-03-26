@@ -7,6 +7,8 @@ author:
 date: 04-22-2025
 categories: [leetcode,R] # self-defined categories
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -17,6 +19,7 @@ library(R6)
 
 ::: callout-note
 ## When are level orders of a binary tree?
+
 The level orders of a tree are the order of each node at each level (depth) of a binary tree (going in a left to right fashion).
 :::
 
@@ -50,7 +53,6 @@ graph TD
   linkStyle 1 stroke:transparent,stroke-width:0
   
 ```
-
 
 And for this tree we would output `[1], [2], [4,5], [6,7]`
 
@@ -159,5 +161,34 @@ LTree = R6Class(
   
   ))
 ```
+
+The algorithm works as expected on both of the trees we used as an example earlier.
+
+```{r}
+tree1 = Node$new(value = 1)
+tree1[["left"]] = Node$new(value = 2)
+tree1[["right"]] = Node$new(value = 3)
+tree1[["left"]][["left"]] = Node$new(value = 4)
+tree1[["left"]][["right"]] = Node$new(value = 5)
+tree1[["right"]][["left"]] = Node$new(value = 6)
+tree1[["right"]][["right"]] = Node$new(value = 7)
+
+LTree$new()$level.traverse(tree1)
+```
+
+```{r}
+tree2 = Node$new(value = 1)
+tree2[["left"]] = Node$new(value = 2)
+tree2[["left"]][["left"]] = Node$new(value = 4)
+tree2[["left"]][["right"]] = Node$new(value = 5)
+tree2[["left"]][["right"]][["left"]] = Node$new(value = 6)
+tree2[["left"]][["right"]][["right"]] = Node$new(value = 7)
+
+LTree$new()$level.traverse(tree2)
+
+
+```
+
+
 
 
