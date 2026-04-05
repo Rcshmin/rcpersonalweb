@@ -266,6 +266,8 @@ ON t1.customer_id = t2.customer_id AND
 ```{sql}
 #| connection: con
 
+/* Number of purchases and total spent before becoming member */
+
 SELECT sales.customer_id, SUM(price) AS pre_member_spent, COUNT() AS pre_member_purch_num
 FROM sales
 INNER JOIN members ON
@@ -282,6 +284,8 @@ GROUP BY sales.customer_id
 ```{sql}
 #| connection: con
 #| max.print: -1
+
+/* Points earned; 10 for each dollar, times 2 for sushi */ 
 
 SELECT customer_id, SUM(points) AS total_points
 FROM(
@@ -303,6 +307,8 @@ GROUP BY customer_id
 ```{sql}
 #| connection: con
 #| max.print: -1
+
+/* Points earned; times 2 for 1 week after becoming member */ 
 
 /* Subquery in a CTE to create points earned on each order based off conditionals */
 WITH trans_points_cte AS(
@@ -343,6 +349,8 @@ GROUP BY customer_id
 #| connection: con
 #| max.print: -1
 
+/* Table with additional column for member */ 
+
 SELECT sales.customer_id, sales.order_date,
        menu.product_name, menu.price,
        CASE
@@ -361,6 +369,8 @@ INNER JOIN menu ON
 ```{sql}
 #| connection: con
 #| max.print: -1
+
+/* Rankings (date) of purchases made after becoming a member */
 
 WITH whole_table_cte AS(
   SELECT sales.customer_id, order_date,
