@@ -1,0 +1,386 @@
+---
+title: "Danny's Diner"
+description: "My solutions to the Danny's Diner case study"
+author:
+  - name: Rashmin Chitale
+    url: 
+date: 04-05-2026
+categories: [sql]
+---
+
+# Introduction
+
+Danny's Diner is a case study made available as part of the 8 week SQL challenge by Danny Ma. It includes a set of related tables on the transactions of customers at a diner. You can find this case study at this [link](https://8weeksqlchallenge.com/). I will be using the case study to revise SQL, which I have not used in a while.
+
+# Setup
+
+```{r warnings = F, error=F, message = F, echo = T, output = F}
+
+# Required packages
+
+library(duckdb)
+library(DBI)
+library(tibble)
+library(lubridate)
+
+#Create a database/connection in memory
+
+con = DBI::dbConnect(duckdb::duckdb(), dbdir = ':memory:')
+
+#Create tables in R
+
+sales = tibble(
+    customer_id = c('A','A','A','A','A','A','B','B',
+                    'B','B','B','B','C','C','C'),
+    order_date = mdy('1/1/2021','1/1/2021','1/7/2021','1/10/2021',
+                     '1/11/2021','1/11/2021','1/1/2021','1/2/2021',
+                     '1/4/2021','1/11/2021','1/16/2021','2/1/2021',
+                     '1/1/2021','1/1/2021','1/7/2021'),
+    product_id = c(1,2,2,3,3,3,2,2,1,1,3,3,3,3,3))
+
+menu = tibble(
+  product_id = c(1,2,3), 
+  product_name = c('sushi','curry','ramen'), 
+  price = c(10,15,12))
+
+members = tibble(
+  customer_id = c('A','B'),
+  join_date = mdy('1/7/2021', '1/9/2021'))
+
+#Register connection of tables in R to the SQL database in memory
+
+duckdb_register(con, "sales", sales)
+duckdb_register(con, "menu", menu)
+duckdb_register(con, "members", members)
+
+```
+
+# Questions
+
+## Question 1
+
+```{sql}
+#| connection: con
+
+/* Total amount spent by each customer */ 
+
+SELECT customer_id, SUM(price) AS total_spent
+FROM sales
+INNER JOIN menu ON menu.product_id = sales.product_id
+GROUP BY customer_id
+```
+
+```{r eval = F, include = F}
+dbGetQuery(con, 'SELECT customer_id, COUNT(DISTINCT order_date) AS days_visited FROM sales GROUP BY customer_id')
+```
+
+## Question 2
+
+```{sql}
+#| connection: con
+
+/* Days visited by each customer */ 
+
+SELECT customer_id, COUNT(DISTINCT order_date) AS days_visited
+FROM sales
+GROUP BY customer_id
+```
+
+## Question 3
+
+```{sql}
+#| connection: con
+
+/* First item from menu purchased by each customer */ 
+
+SELECT product_name, order_date, customer_id
+FROM sales
+INNER JOIN menu ON sales.product_id = menu.product_id
+WHERE order_date IN (
+  SELECT MIN(order_date)
+  FROM sales
+  GROUP BY customer_id)
+
+```
+
+## Question 4
+
+```{sql}
+#| connection: con
+
+/* Most purchased item on menu, and no of times it was purchase */
+
+SELECT product_name, COUNT(customer_id) as total_purchased
+FROM sales
+INNER JOIN menu ON sales.product_id = menu.product_id
+GROUP BY product_name
+```
+
+We want to filter the above table using sub-queries
+
+```{sql}
+#| connection: con
+
+/* Most purchased item on menu, and no of times it was purchase */
+
+SELECT product_name, COUNT(customer_id) as total_purchased
+FROM sales
+INNER JOIN menu ON sales.product_id = menu.product_id
+GROUP BY product_name
+HAVING /* Filter the original table for item which had max purchases */ 
+  total_purchased 
+  IN 
+  ( /* This sub-query gets number of times most purchased item was bought */ 
+  SELECT MAX(total_purchased)
+  FROM 
+  ( /* This sub-query gets product and number of purchases */ 
+  SELECT product_name, COUNT(customer_id) as total_purchased
+  FROM sales
+  INNER JOIN menu ON sales.product_id = menu.product_id
+  GROUP BY product_name) AS purchases
+  )
+
+```
+
+## Question 5
+
+```{sql}
+#| connection: con
+
+/* Most popular item for each customer */
+
+SELECT DISTINCT customer_id, product_name,
+  COUNT() OVER( PARTITION BY product_name, customer_id ) AS times_bought
+FROM sales 
+INNER JOIN menu ON sales.product_id = menu.product_id
+ORDER BY sales.customer_id, menu.product_name ASC
+
+```
+
+From this table we want to filter for the most popular item for each customer (same popularity if times bought is tied)
+
+```{sql}
+#| connection: con
+
+/* Most popular item for each customer */
+
+SELECT t1.customer_id, t2.product_name, t2.times_bought
+FROM(
+  /* On the table of preferences we find number of times they bought their most fav item*/ 
+  SELECT DISTINCT customer_id, 
+         MAX(times_bought) OVER (PARTITION BY customer_id) AS max_bought
+  FROM(
+    /* Table of preferences for each customer */ 
+    SELECT DISTINCT customer_id, product_name,
+    COUNT() OVER( PARTITION BY product_name, customer_id ) AS times_bought
+    FROM sales 
+    INNER JOIN menu ON sales.product_id = menu.product_id
+    )) AS t1
+/* We now inner join t1 and t2 tables based off a 2 column key */ 
+INNER JOIN (
+  /* This is the same as the table of preference from above */ 
+  SELECT DISTINCT customer_id, product_name,
+  COUNT() OVER( PARTITION BY product_name, customer_id ) AS times_bought
+  FROM sales 
+  INNER JOIN menu ON sales.product_id = menu.product_id
+  ) AS t2 
+  ON t1.customer_id = t2.customer_id AND 
+     t1.max_bought = t2.times_bought 
+ORDER BY t1.customer_id ASC
+
+
+```
+
+## Question 6
+
+```{sql}
+#| connection: con
+
+/* Item first bought after becoming a member */
+
+SELECT t1.customer_id, t2.product_name, t2.order_date
+FROM (
+  SELECT /* Subquery takes result of below subquery and finds the first purchase after becoming a member*/ 
+    DISTINCT customer_id, MIN(order_date) OVER(PARTITION BY customer_id) AS after_member
+  FROM(
+    /* Below subquery gets all purchases for each member >= join date */ 
+    SELECT sales.customer_id, menu.product_name, order_date
+    FROM sales
+    INNER JOIN members ON
+      sales.customer_id = members.customer_id AND
+      sales.order_date >= members.join_date
+    INNER JOIN menu ON
+      sales.product_id = menu.product_id)
+) AS t1
+INNER JOIN ( /* Match customer id and first purchase in the 2 tables */
+  SELECT sales.customer_id, menu.product_name, order_date
+  FROM sales
+  INNER JOIN members ON
+    sales.customer_id = members.customer_id AND
+    sales.order_date >= members.join_date
+  INNER JOIN menu ON
+    sales.product_id = menu.product_id
+) AS t2
+ON t1.customer_id = t2.customer_id AND
+   t1.after_member = t2.order_date
+
+```
+
+## Question 7
+
+```{sql}
+#| connection: con
+
+/* Item bought just before becoming a member */
+
+SELECT t1.customer_id, t2.product_name, t2.order_date
+FROM (
+  SELECT /* Subquery takes result of below subquery and finds the first purchase after becoming a member*/ 
+    DISTINCT customer_id, MAX(order_date) OVER(PARTITION BY customer_id) AS after_member
+  FROM(
+    /* Below subquery gets all purchases for each member >= join date */ 
+    SELECT sales.customer_id, menu.product_name, order_date
+    FROM sales
+    INNER JOIN members ON
+      sales.customer_id = members.customer_id AND
+      sales.order_date < members.join_date
+    INNER JOIN menu ON
+      sales.product_id = menu.product_id)
+) AS t1
+INNER JOIN ( /* Match customer id and first purchase in the 2 tables */
+  SELECT sales.customer_id, menu.product_name, order_date
+  FROM sales
+  INNER JOIN members ON
+    sales.customer_id = members.customer_id AND
+    sales.order_date < members.join_date
+  INNER JOIN menu ON
+    sales.product_id = menu.product_id
+) AS t2
+ON t1.customer_id = t2.customer_id AND
+   t1.after_member = t2.order_date
+
+```
+
+## Question 8
+
+```{sql}
+#| connection: con
+
+SELECT sales.customer_id, SUM(price) AS pre_member_spent, COUNT() AS pre_member_purch_num
+FROM sales
+INNER JOIN members ON
+  sales.customer_id = members.customer_id AND
+  sales.order_date < members.join_date
+INNER JOIN menu ON
+  sales.product_id = menu.product_id
+GROUP BY sales.customer_id
+
+```
+
+## Question 9
+
+```{sql}
+#| connection: con
+#| max.print: -1
+
+SELECT customer_id, SUM(points) AS total_points
+FROM(
+  /* Create multiplier, points for each product */ 
+  SELECT sales.customer_id,
+  CASE product_name
+    WHEN 'sushi' THEN 20
+    ELSE 10
+  END AS multiplier, price*multiplier AS points
+  FROM sales
+  INNER JOIN menu ON
+    sales.product_id = menu.product_id)
+GROUP BY customer_id
+
+```
+
+## Question 10
+
+```{sql}
+#| connection: con
+#| max.print: -1
+
+/* Subquery in a CTE to create points earned on each order based off conditionals */
+WITH trans_points_cte AS(
+    SELECT sales.customer_id, 
+         sales.order_date, members.join_date,
+         menu.product_name, menu.price,
+         /* End date of membership points benefit */
+         join_date + 7 AS end_mult_date,
+         /* Logical when benefit active based off relative order date */ 
+         order_date BETWEEN join_date AND end_mult_date AS in_mult,
+         /* Multiplier for each dollar amount */ 
+         CASE
+           WHEN in_mult = TRUE THEN 20 
+           WHEN product_name = 'sushi' THEN 20
+           ELSE 10
+         END AS multiplier,
+         /* Points is price times multiplier */
+         price*multiplier AS points
+  FROM sales
+  /* Inner join all 3 tables */ 
+  INNER JOIN members ON
+    sales.customer_id = members.customer_id
+  INNER JOIN menu ON
+    sales.product_id = menu.product_id
+  /* Filter for orders in january only */ 
+  WHERE order_date < '2021-02-01'
+)
+
+/* Sum points for each customer */
+SELECT customer_id, SUM(points) AS total_points
+FROM trans_points_cte
+GROUP BY customer_id 
+```
+
+## Additional Question 1
+
+```{sql}
+#| connection: con
+#| max.print: -1
+
+SELECT sales.customer_id, sales.order_date,
+       menu.product_name, menu.price,
+       CASE
+         WHEN join_date IS NULL THEN 'N'
+         ELSE 'Y'
+       END AS member
+FROM sales
+LEFT OUTER JOIN members ON
+  sales.customer_id = members.customer_id
+INNER JOIN menu ON
+  sales.product_id = menu.product_id
+```
+
+## Additional Question 2
+
+```{sql}
+#| connection: con
+#| max.print: -1
+
+WITH whole_table_cte AS(
+  SELECT sales.customer_id, order_date,
+         product_name, price,
+         join_date,
+         order_date >= join_date AS member,
+         CASE
+           WHEN member = TRUE THEN 
+             DENSE_RANK() OVER(PARTITION BY sales.customer_ID, member 
+                               ORDER BY order_date ASC)
+           ELSE 'null'
+         END AS ranking
+  FROM sales
+  INNER JOIN menu ON
+    sales.product_id = menu.product_id
+  LEFT OUTER JOIN members ON
+    sales.customer_id = members.customer_id
+  ORDER BY sales.customer_id ASC
+)
+
+SELECT customer_id, order_date, product_name, price, member, ranking
+FROM whole_table_cte
+```
